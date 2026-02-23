@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDM – Portal del Asegurado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --accent: #3ecf8e;
+            --accent2: #06b6d4;
+            --sidebar-bg: #0a1628;
+            --bg: #0f1e35;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #e8f0fe;
+            --muted: rgba(255, 255, 255, 0.45);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ——— SIDEBAR ——— */
+        .sidebar {
+            width: 240px;
+            min-height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px;
+            margin-bottom: 32px;
+        }
+
+        .sidebar-logo .icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo span {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .nav-section {
+            font-size: 0.68rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 20px;
+            margin: 16px 0 6px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(62, 207, 142, 0.12);
+            color: var(--accent);
+        }
+
+        .nav-link .n-icon {
+            font-size: 17px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px 20px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .user-info strong {
+            font-size: 0.85rem;
+            color: var(--text);
+            display: block;
+        }
+
+        .user-info small {
+            font-size: 0.68rem;
+            color: var(--muted);
+        }
+
+        /* ——— MAIN ——— */
+        .main {
+            margin-left: 240px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: rgba(10, 22, 40, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar h2 {
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        /* Bienvenida hero */
+        .hero {
+            background: linear-gradient(135deg, rgba(62, 207, 142, 0.15), rgba(6, 182, 212, 0.15));
+            border: 1px solid rgba(62, 207, 142, 0.2);
+            border-radius: 16px;
+            padding: 28px 30px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .hero h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .hero p {
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .hero-icon {
+            font-size: 56px;
+            flex-shrink: 0;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .stat-card .label {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-card .sub {
+            font-size: 0.73rem;
+            color: var(--accent);
+            margin-top: 5px;
+        }
+
+        .stat-card .icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #fff;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        thead th {
+            text-align: left;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .pill-green {
+            background: rgba(62, 207, 142, 0.15);
+            color: var(--accent);
+        }
+
+        .pill-yellow {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .pill-red {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .pill-blue {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent2);
+        }
+
+        /* Sección de documentos */
+        .doc-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .doc-item:last-child {
+            border-bottom: none;
+        }
+
+        .doc-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .doc-icon.pdf {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .doc-icon.img {
+            background: rgba(6, 182, 212, 0.15);
+        }
+
+        .doc-icon.doc {
+            background: rgba(62, 207, 142, 0.15);
+        }
+
+        .doc-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        .doc-meta {
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .doc-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Modal reporte */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: #16213e;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 440px;
+            animation: fadeUp 0.3s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px 13px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.3s;
+            resize: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--accent);
+        }
+
+        select option {
+            background: #16213e;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="icon">🛡️</div>
+            <span>BDM Sistema</span>
+        </div>
+
+        <span class="nav-section">Mi Portal</span>
+        <a class="nav-link active" href="#"><span class="n-icon">🏠</span> Inicio</a>
+        <a class="nav-link" href="#"><span class="n-icon">📋</span> Mis Siniestros</a>
+        <a class="nav-link" href="#" onclick="openModal()"><span class="n-icon">📝</span> Reportar Siniestro</a>
+
+        <span class="nav-section">Documentos</span>
+        <a class="nav-link" href="#"><span class="n-icon">📁</span> Mis Documentos</a>
+        <a class="nav-link" href="#"><span class="n-icon">📷</span> Subir Evidencia</a>
+
+        <span class="nav-section">Soporte</span>
+        <a class="nav-link" href="#"><span class="n-icon">💬</span> Contactar Ajustador</a>
+        <a class="nav-link" href="#"><span class="n-icon">❓</span> Ayuda</a>
+        <a class="nav-link" href="login.html"><span class="n-icon">🚪</span> Cerrar Sesión</a>
+
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <div class="avatar">M</div>
+                <div class="user-info">
+                    <strong>María García</strong>
+                    <small>Asegurada</small>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+        <div class="topbar">
+            <h2>Mi Portal de Seguros</h2>
+            <span class="badge">Asegurado</span>
+        </div>
+
+        <div class="content">
+
+            <!-- Hero bienvenida -->
+            <div class="hero">
+                <div>
+                    <h3>¡Buenos días, María! 👋</h3>
+                    <p>Aquí puedes consultar el estado de tus siniestros,<br>subir evidencia y contactar a tu ajustador
+                        asignado.</p>
+                    <button class="btn btn-accent" style="margin-top:14px;" onclick="openModal()">+ Reportar Nuevo
+                        Siniestro</button>
+                </div>
+                <div class="hero-icon">🛡️</div>
+            </div>
+
+            <!-- KPIs -->
+            <div class="grid-cards">
+                <div class="stat-card">
+                    <div class="icon">📋</div>
+                    <div class="label">Mis Siniestros</div>
+                    <div class="value">3</div>
+                    <div class="sub">1 activo</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">✅</div>
+                    <div class="label">Resueltos</div>
+                    <div class="value">2</div>
+                    <div class="sub">Cerrados sin incidencias</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📁</div>
+                    <div class="label">Documentos</div>
+                    <div class="value">8</div>
+                    <div class="sub">Archivos subidos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🛡️</div>
+                    <div class="label">Póliza vigente</div>
+                    <div class="value">Activa</div>
+                    <div class="sub">Vence: Dic 2026</div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1.4fr 1fr; gap: 20px;">
+
+                <!-- Mis siniestros -->
+                <div class="panel">
+                    <div class="section-header">
+                        <h3>📋 Mis Siniestros</h3>
+                        <button class="btn btn-outline">Ver todos</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Tipo</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#SIN-2401</td>
+                                <td>Automóvil</td>
+                                <td>10 Feb 2026</td>
+                                <td><span class="pill pill-yellow">En revisión</span></td>
+                            </tr>
+                            <tr>
+                                <td>#SIN-2315</td>
+                                <td>Hogar</td>
+                                <td>05 Nov 2025</td>
+                                <td><span class="pill pill-green">Resuelto</span></td>
+                            </tr>
+                            <tr>
+                                <td>#SIN-2210</td>
+                                <td>Automóvil</td>
+                                <td>20 Ago 2025</td>
+                                <td><span class="pill pill-green">Resuelto</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Documentos recientes -->
+                <div class="panel">
+                    <div class="section-header">
+                        <h3>📁 Documentos Recientes</h3>
+                        <button class="btn btn-accent">Subir</button>
+                    </div>
+
+                    <div class="doc-item">
+                        <div class="doc-icon img">📷</div>
+                        <div>
+                            <div class="doc-name">Foto_daño_frontal.jpg</div>
+                            <div class="doc-meta">Subido el 10 Feb 2026 · 2.1 MB</div>
+                        </div>
+                        <div class="doc-actions">
+                            <button class="btn btn-outline" style="padding:5px 10px;">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="doc-item">
+                        <div class="doc-icon pdf">📄</div>
+                        <div>
+                            <div class="doc-name">Reporte_policia.pdf</div>
+                            <div class="doc-meta">Subido el 11 Feb 2026 · 540 KB</div>
+                        </div>
+                        <div class="doc-actions">
+                            <button class="btn btn-outline" style="padding:5px 10px;">⬇</button>
+                        </div>
+                    </div>
+
+                    <div class="doc-item">
+                        <div class="doc-icon doc">📝</div>
+                        <div>
+                            <div class="doc-name">Declaración_hechos.docx</div>
+                            <div class="doc-meta">Subido el 12 Feb 2026 · 88 KB</div>
+                        </div>
+                        <div class="doc-actions">
+                            <button class="btn btn-outline" style="padding:5px 10px;">⬇</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- MODAL Reportar Siniestro -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+        <div class="modal" id="modal">
+            <h3>📝 Reportar Nuevo Siniestro</h3>
+
+            <form id="siniestroForm" onsubmit="return handleSiniestro(event)">
+                <div class="form-group">
+                    <label for="tipo">Tipo de Siniestro</label>
+                    <select id="tipo" required>
+                        <option value="" disabled selected>Selecciona tipo</option>
+                        <option>Automóvil</option>
+                        <option>Hogar</option>
+                        <option>Vida</option>
+                        <option>Gastos Médicos</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaSin">Fecha del Siniestro</label>
+                    <input type="date" id="fechaSin" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" rows="3" placeholder="Describe brevemente lo ocurrido..."
+                        required></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-accent" style="flex:1;">Enviar Reporte</button>
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+        }
+
+        function closeModalOutside(e) {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        }
+
+        function handleSiniestro(e) {
+            e.preventDefault();
+            closeModal();
+            alert('¡Reporte enviado exitosamente! Un ajustador se pondrá en contacto contigo pronto.');
+            document.getElementById('siniestroForm').reset();
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function () {
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>
