@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisión de Siniestro | SegurosPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- DESIGN SYSTEM --- */
+        :root {
+            --primary-orange: #ff6b00;
+            --primary-orange-hover: #e65c00;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --bg-body: #f4f4f5;
+            --border-color: #e4e4e7;
+            --text-main: #27272a;
+            --text-muted: #71717a;
+
+            /* Semántica */
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --success: #10b981;
+            --info: #3b82f6;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ——— TOPBAR ——— */
+        .topbar {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 0 32px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .topbar-left,
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .topbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            margin-right: 16px;
+        }
+
+        .topbar-logo h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+
+        .topbar-logo h1 span {
+            color: var(--primary-orange);
+        }
+
+        .topbar-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .topbar-nav a {
+            color: #a1a1aa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .topbar-nav a:hover {
+            color: var(--white);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .topbar-nav a.active {
+            color: var(--primary-orange);
+            background-color: rgba(255, 107, 0, 0.1);
+            font-weight: 600;
+        }
+
+        .badge-role {
+            background-color: var(--danger);
+            color: var(--white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 1px solid #333;
+            padding-left: 24px;
+        }
+
+        .user-info {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info strong {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .user-info small {
+            font-size: 0.75rem;
+            color: #a1a1aa;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: var(--danger);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Botones */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-orange);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-orange-hover);
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-body);
+            border-color: #d4d4d8;
+        }
+
+        /* ——— MAIN CONTENT ——— */
+        .main-content {
+            padding: 40px 32px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-orange);
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--black);
+            letter-spacing: -0.02em;
+        }
+
+        .notice-box {
+            background-color: var(--warning-bg);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-left: 4px solid var(--warning);
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+        }
+
+        .notice-box p {
+            font-size: 0.95rem;
+            color: var(--warning-text);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Paneles */
+        .panel {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .section-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-header h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Data Grid (Info General) */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px 16px;
+        }
+
+        @media (max-width: 600px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-item .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .info-item .val {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--black);
+        }
+
+        .info-item .val.highlight {
+            color: var(--warning);
+            background-color: var(--warning-bg);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+            width: max-content;
+        }
+
+        .desc-box {
+            margin-top: 24px;
+            background-color: #fafafa;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .desc-box p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-top: 8px;
+            color: var(--text-main);
+        }
+
+        /* Lista de Documentos */
+        .doc-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--bg-body);
+        }
+
+        .doc-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .doc-icon {
+            font-size: 24px;
+            margin-right: 16px;
+            background: var(--bg-body);
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .doc-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .doc-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--black);
+        }
+
+        .doc-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Formulario de Resolución */
+        .form-group {
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 8px;
+        }
+
+        select,
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            background: #fafafa;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        select:focus,
+        input[type="date"]:focus,
+        textarea:focus {
+            background: var(--white);
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+        }
+
+        /* Animación para los campos condicionales */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .conditional-field {
+            animation: fadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="topbar-left">
+            <a href="dash_supervisor.html" class="topbar-logo">
+                <h1>Seguros<span>Pro</span></h1>
+            </a>
+            <nav class="topbar-nav">
+                <a href="dash_supervisor.html">Dashboard</a>
+                <a href="#">Ajustadores</a>
+                <a class="active" href="#">Todos los Siniestros</a>
+            </nav>
+        </div>
+        <div class="topbar-right">
+            <span class="badge-role">Supervisor</span>
+            <div class="user-badge">
+                <div class="user-info">
+                    <strong>Laura S.</strong>
+                    <small>Autorización Múltiple</small>
+                </div>
+                <div class="avatar">LS</div>
+            </div>
+            <a href="login.html" class="btn btn-outline"
+                style="padding: 6px 12px; font-size:0.8rem; color: white; border-color: #333;">Salir</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <a href="dash_supervisor.html" class="back-link">
+            <span>←</span> Volver al Dashboard Operativo
+        </a>
+
+        <div class="page-header">
+            <h2>Revisión de Siniestro</h2>
+        </div>
+
+        <div class="notice-box">
+            <p><strong>Atención Requerida:</strong> Estás a punto de emitir un dictamen oficial. Asegúrate de haber
+                revisado toda la evidencia proporcionada por el ajustador antes de guardar la resolución.</p>
+        </div>
+
+        <div class="panel">
+            <div class="section-header">
+                <h3>📋 Ficha Técnica #SIN-2410</h3>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="label">Asegurado Titular</div>
+                    <div class="val">Roberto Díaz</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Número de Póliza</div>
+                    <div class="val">POL-884920</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Tipo de Siniestro</div>
+                    <div class="val">Automóvil (Colisión)</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Fecha del Incidente</div>
+                    <div class="val">26 de Feb, 2026</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Ajustador Asignado</div>
+                    <div class="val">Carlos A.</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Estado Actual</div>
+                    <div class="val highlight">Evaluación Pendiente</div>
+                </div>
+            </div>
+
+            <div class="desc-box">
+                <div class="label"
+                    style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">
+                    Descripción de los hechos (Ajustador)</div>
+                <p>Colisión frontal en cruce de semáforo. El vehículo asegurado impactó con una unidad particular que no
+                    respetó el semáforo en rojo. Hay daños estructurales considerables en fascia, parrilla y radiador.
+                    Se anexan fotografías del peritaje.</p>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="section-header">
+                <h3>📁 Documentación y Evidencia Recabada</h3>
+            </div>
+
+            <div class="doc-item">
+                <div class="doc-icon">📸</div>
+                <div class="doc-info">
+                    <div class="doc-name">Evidencia_Frontal_Peritaje.jpg</div>
+                    <div class="doc-meta">Subido por Carlos A. · 2.4 MB · 26 Feb</div>
+                </div>
+                <a href="#" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.8rem;">Ver Archivo</a>
+            </div>
+
+            <div class="doc-item">
+                <div class="doc-icon">📄</div>
+                <div class="doc-info">
+                    <div class="doc-name">Declaracion_Ajustador_Oficial.pdf</div>
+                    <div class="doc-meta">Subido por Carlos A. · 1.1 MB · 27 Feb</div>
+                </div>
+                <a href="#" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.8rem;">Leer Reporte</a>
+            </div>
+        </div>
+
+        <div class="panel" style="border-top: 4px solid var(--black);">
+            <div class="section-header">
+                <h3>⚖️ Emitir Dictamen Oficial</h3>
+            </div>
+
+            <form id="resolucionForm" onsubmit="return handleResolucion(event)">
+                <div class="form-group">
+                    <label for="estadoSiniestro">Resolución del Siniestro *</label>
+                    <select id="estadoSiniestro" required>
+                        <option value="" disabled selected>-- Selecciona un dictamen --</option>
+                        <option value="rechazado">Rechazado (Improcedente)</option>
+                        <option value="aceptado_con_deducible">Aceptado con pago de deducible</option>
+                        <option value="aceptado_sin_deducible">Aceptado sin pago de deducible</option>
+                        <option value="reparacion">Aplica pago directo para reparación de unidad</option>
+                        <option value="perdida_total">Pérdida Total (Aplica indemnización de la unidad)</option>
+                    </select>
+                </div>
+
+                <div class="form-group conditional-field" id="contenedorTerminacionReparacion" style="display: none;">
+                    <label for="fechaTerminacion">Fecha Compromiso del Taller (Reparación) *</label>
+                    <input type="date" id="fechaTerminacion">
+                </div>
+
+                <div class="form-group conditional-field" id="contenedorPagoSiniestro" style="display: none;">
+                    <label for="fechaPago">Fecha Programada de Transferencia/Pago *</label>
+                    <input type="date" id="fechaPago">
+                </div>
+
+                <div class="form-group">
+                    <label for="notasSupervisor">Notas de Auditoría (Internas)</label>
+                    <textarea id="notasSupervisor" rows="4"
+                        placeholder="Justifica la decisión tomada. Estas notas solo serán visibles para el equipo interno y auditoría..."></textarea>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-color);">
+                    <button type="button" class="btn btn-outline" style="padding: 12px 24px;">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 12px 24px;">Firma y Guardar
+                        Resolución</button>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+    <script>
+        const estadoSelect = document.getElementById('estadoSiniestro');
+        const contReparacion = document.getElementById('contenedorTerminacionReparacion');
+        const contPago = document.getElementById('contenedorPagoSiniestro');
+        const fechaTerminacion = document.getElementById('fechaTerminacion');
+        const fechaPago = document.getElementById('fechaPago');
+
+        // Lógica de Revelación Progresiva (Progressive Disclosure)
+        estadoSelect.addEventListener('change', function () {
+            const val = this.value;
+
+            // Reset visual state
+            contReparacion.style.display = 'none';
+            contPago.style.display = 'none';
+            fechaTerminacion.removeAttribute('required');
+            fechaPago.removeAttribute('required');
+
+            // Caso: Reparación
+            if (val === 'reparacion') {
+                contReparacion.style.display = 'flex'; // Usamos flex por el form-group
+                fechaTerminacion.setAttribute('required', 'true');
+            }
+
+            // Caso: Pérdida Total
+            if (val === 'perdida_total') {
+                contPago.style.display = 'flex';
+                fechaPago.setAttribute('required', 'true');
+            }
+        });
+
+        function handleResolucion(e) {
+            e.preventDefault();
+            const estadoTexto = estadoSelect.options[estadoSelect.selectedIndex].text;
+            let mensaje = "✅ Resolución guardada y firmada exitosamente.\n\nDictamen Oficial:\n" + estadoTexto;
+
+            if (estadoSelect.value === 'reparacion') {
+                mensaje += "\n\nFecha Compromiso: " + fechaTerminacion.value;
+            } else if (estadoSelect.value === 'perdida_total') {
+                mensaje += "\n\nFecha Programada de Pago: " + fechaPago.value;
+            }
+
+            alert(mensaje);
+            // Redirigir al dashboard
+            window.location.href = 'dash_supervisor.html';
+        }
+    </script>
+</body>
+
+</html>

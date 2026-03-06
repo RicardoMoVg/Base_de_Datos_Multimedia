@@ -4,9 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDM – Iniciar Sesión</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Iniciar Sesión | SegurosPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Reutilizamos el Design System (Variables) para mantener consistencia */
+        :root {
+            --primary-orange: #ff6b00;
+            --primary-orange-hover: #e65c00;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --bg-body: #f4f4f5;
+            --border-color: #e4e4e7;
+            --text-main: #27272a;
+            --text-muted: #71717a;
+            --input-bg: #fafafa;
+        }
+
         *,
         *::before,
         *::after {
@@ -21,42 +34,44 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            background-size: 400% 400%;
-            animation: gradientShift 10s ease infinite;
+            /* Fondo claro con un sutil patrón o gradiente radial para darle profundidad sin ser ruidoso */
+            background: radial-gradient(circle at top right, #ffffff, var(--bg-body));
+            color: var(--text-main);
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
+        /* Elemento decorativo de fondo para darle un toque creativo y corporativo */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -20vh;
+            left: -10vw;
+            width: 50vw;
+            height: 50vw;
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.05), transparent);
+            border-radius: 50%;
+            z-index: 0;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             padding: 48px 40px;
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-            animation: fadeUp 0.6s ease;
+            /* Sombra suave y profesional en lugar de una sombra pesada */
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 1;
         }
 
         @keyframes fadeUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
 
             to {
@@ -70,116 +85,109 @@
             margin-bottom: 32px;
         }
 
-        .logo-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #6c63ff, #3ecf8e);
-            border-radius: 16px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-bottom: 12px;
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--black);
+            letter-spacing: -0.02em;
         }
 
-        .logo h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 1px;
+        .logo h1 span {
+            color: var(--primary-orange);
         }
 
         .logo p {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.5);
-            margin-top: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-weight: 400;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         label {
             display: block;
             font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.65);
-            margin-bottom: 6px;
+            color: var(--black);
+            margin-bottom: 8px;
             font-weight: 600;
-            letter-spacing: 0.5px;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         input {
             width: 100%;
-            padding: 13px 16px;
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            color: #fff;
+            padding: 14px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
             font-size: 0.95rem;
             font-family: 'Inter', sans-serif;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: all 0.2s ease;
             outline: none;
         }
 
         input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
+            color: #a1a1aa;
         }
 
         input:focus {
-            border-color: #6c63ff;
-            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.25);
+            background: var(--white);
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+        }
+
+        /* Enlace de olvidé contraseña */
+        .forgot-password {
+            display: block;
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-top: -12px;
+            margin-bottom: 24px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .forgot-password:hover {
+            color: var(--primary-orange);
         }
 
         .btn-primary {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #6c63ff, #3ecf8e);
+            background-color: var(--primary-orange);
             border: none;
-            border-radius: 10px;
-            color: #fff;
+            border-radius: 8px;
+            color: var(--white);
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.3s, transform 0.2s;
-            margin-top: 8px;
-            letter-spacing: 0.5px;
+            transition: background-color 0.2s, transform 0.1s;
+            letter-spacing: 0.02em;
         }
 
         .btn-primary:hover {
-            opacity: 0.88;
-            transform: translateY(-1px);
+            background-color: var(--primary-orange-hover);
         }
 
         .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .footer-links {
-            text-align: center;
-            margin-top: 24px;
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.45);
-        }
-
-        .footer-links a {
-            color: #6c63ff;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-
-        .footer-links a:hover {
-            color: #3ecf8e;
+            transform: scale(0.98);
         }
 
         .divider {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin: 20px 0;
-            color: rgba(255, 255, 255, 0.25);
-            font-size: 0.8rem;
+            gap: 12px;
+            margin: 28px 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
         }
 
         .divider::before,
@@ -187,7 +195,24 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: rgba(255, 255, 255, 0.12);
+            background: var(--border-color);
+        }
+
+        .footer-links {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links a {
+            color: var(--black);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-orange);
         }
     </style>
 </head>
@@ -195,15 +220,14 @@
 <body>
     <div class="card">
         <div class="logo">
-            <div class="logo-icon">🗄️</div>
-            <h1>BDM Sistema</h1>
-            <p>Base de Datos Multimedia</p>
+            <h1>Seguros<span>Pro</span></h1>
+            <p>Acceso al sistema de gestión</p>
         </div>
 
-        <form id="loginForm" action="#" method="post" onsubmit="return handleLogin(event)">
+        <form id="loginForm" action="consulta_siniestros.html" method="get">
             <div class="form-group">
-                <label for="usuario">Usuario</label>
-                <input type="text" id="usuario" name="usuario" placeholder="Ingresa tu usuario" required
+                <label for="usuario">Usuario / Correo</label>
+                <input type="text" id="usuario" name="usuario" placeholder="ej. analista@segurospro.com" required
                     autocomplete="username">
             </div>
 
@@ -213,31 +237,17 @@
                     autocomplete="current-password">
             </div>
 
-            <button type="submit" class="btn-primary" id="btnLogin">Iniciar Sesión</button>
+            <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+
+            <button type="submit" class="btn-primary">Iniciar Sesión</button>
         </form>
 
         <div class="divider">o</div>
 
         <div class="footer-links">
-            ¿No tienes cuenta? <a href="../views/registro.html">Regístrate aquí</a>
+            ¿Nuevo en el equipo? <a href="../views/registro.html">Crear cuenta</a>
         </div>
     </div>
-
-    <script>
-        function handleLogin(e) {
-            e.preventDefault();
-            const usuario = document.getElementById('usuario').value.trim();
-            const password = document.getElementById('password').value;
-
-            // TODO: Conectar con backend / lógica de roles
-            // Ejemplo de redirección por rol:
-            // if (rol === 'ajustador')   location.href = 'dash_ajustador.html';
-            // if (rol === 'supervisor')  location.href = 'dash_supervisor.html';
-            // if (rol === 'asegurado')   location.href = 'dash_asegurado.html';
-
-            alert(`Bienvenido, ${usuario}. (Lógica de autenticación pendiente)`);
-        }
-    </script>
 </body>
 
 </html>

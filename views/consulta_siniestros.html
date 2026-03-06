@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Siniestros | Seguros</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Definición de la Paleta: Blanco, Negro y Naranja */
+        :root {
+            --primary-orange: #ff6b00;
+            /* Naranja vibrante y moderno */
+            --primary-orange-hover: #e65c00;
+            --black: #1a1a1a;
+            /* Un negro ligeramente suave para la lectura */
+            --pure-black: #000000;
+            --white: #ffffff;
+            --bg-body: #f4f4f5;
+            /* Gris muy claro para dar profundidad a las tarjetas blancas */
+            --border-color: #e4e4e7;
+            --text-main: #27272a;
+            --text-muted: #71717a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 40px;
+        }
+
+        /* Topbar - Diseño en Negro para contraste arquitectónico */
+        .topbar {
+            background-color: var(--pure-black);
+            color: var(--white);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .topbar h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+
+        .topbar-nav {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .topbar-nav a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s, border-bottom 0.2s;
+            padding-bottom: 4px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .topbar-nav a:hover {
+            color: var(--white);
+        }
+
+        /* Enlace activo con el acento naranja */
+        .topbar-nav a.active {
+            color: var(--white);
+            border-bottom: 2px solid var(--primary-orange);
+            font-weight: 600;
+        }
+
+        .badge {
+            background-color: var(--primary-orange);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--pure-black);
+            /* Texto negro sobre naranja resalta excelente */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto 0;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-weight: 700;
+            font-size: 1.75rem;
+            margin-bottom: 24px;
+            color: var(--black);
+        }
+
+        /* Panel principal - Tarjeta Blanca */
+        .panel {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            margin-bottom: 24px;
+        }
+
+        .panel-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        /* Formulario de Filtros */
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            align-items: flex-end;
+            background-color: var(--bg-body);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        label {
+            font-size: 0.75rem;
+            color: var(--black);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+        }
+
+        /* Botones */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background-color: var(--black);
+            color: var(--white);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: #333;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-orange);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-orange-hover);
+        }
+
+        /* Tabla de Datos */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            background-color: var(--white);
+        }
+
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #fafafa;
+        }
+
+        td strong {
+            color: var(--black);
+            font-weight: 600;
+        }
+
+        .status-text {
+            color: var(--primary-orange);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Pequeño punto indicador de estado */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-orange);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            background-color: transparent;
+            color: var(--black);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-small:hover {
+            border-color: var(--black);
+            background-color: var(--bg-body);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="topbar">
+        <h2>Seguros<span style="color: var(--primary-orange);">Pro</span></h2>
+        <nav class="topbar-nav">
+            <a href="dash_supervisor.html">Dashboard</a>
+            <a href="buscar_siniestros.html">Búsqueda</a>
+            <a href="consulta_siniestros.html" class="active">Consultas</a>
+            <a href="login.html">Salir</a>
+            <span class="badge">General</span>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1 class="page-title">Consulta de Siniestros y Pagos</h1>
+
+        <section class="panel">
+            <p class="panel-description">
+                Utiliza los filtros a continuación para segmentar los siniestros por rango de fechas. Puedes realizar
+                búsquedas cruzadas por Asegurado, Ajustador o Supervisor.
+            </p>
+
+            <form action="#">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha_inicio">Fecha Inicio</label>
+                        <input type="date" id="fecha_inicio" name="fecha_inicio">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_fin">Fecha Fin</label>
+                        <input type="date" id="fecha_fin" name="fecha_fin">
+                    </div>
+                    <button type="button" class="btn btn-primary">Filtrar Resultados</button>
+                </div>
+            </form>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Folio</th>
+                        <th>Fecha</th>
+                        <th>Asegurado</th>
+                        <th>Ajustador</th>
+                        <th>Estado Actual</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>#SIN-101</strong></td>
+                        <td>10 Feb, 2026</td>
+                        <td>María García</td>
+                        <td>Carlos A.</td>
+                        <td>
+                            <span class="status-text">
+                                <span class="status-dot"></span> En revisión
+                            </span>
+                        </td>
+                        <td><a href="seguimiento_siniestro.html" class="btn btn-small">Ver Detalles</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>#SIN-102</strong></td>
+                        <td>15 Feb, 2026</td>
+                        <td>Roberto Díaz</td>
+                        <td>Ana L.</td>
+                        <td>
+                            <span class="status-text" style="color: var(--pure-black);">
+                                <span class="status-dot" style="background-color: var(--pure-black);"></span> Pérdida
+                                Total
+                            </span>
+                        </td>
+                        <td><a href="seguimiento_siniestro.html" class="btn btn-small">Ver Detalles</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+
+</html>

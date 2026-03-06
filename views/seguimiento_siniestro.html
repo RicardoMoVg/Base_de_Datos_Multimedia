@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento de Siniestro | SegurosPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- DESIGN SYSTEM --- */
+        :root {
+            --primary-orange: #ff6b00;
+            --primary-orange-hover: #e65c00;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --bg-body: #f4f4f5;
+            --border-color: #e4e4e7;
+            --text-main: #27272a;
+            --text-muted: #71717a;
+
+            /* Colores de Roles para el Chat */
+            --asegurado: #10b981;
+            /* Verde esmeralda */
+            --ajustador: #3b82f6;
+            /* Azul */
+            --supervisor: #8b5cf6;
+            /* Morado */
+
+            /* Burbujas de Chat */
+            --chat-me-bg: #fff7ed;
+            /* Naranja muy pálido */
+            --chat-me-border: #fed7aa;
+            --chat-other-bg: #f8fafc;
+            /* Gris azulado muy pálido */
+            --chat-other-border: #e2e8f0;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Enlace de regreso */
+        .back-link {
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-orange);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            /* El chat ocupa un poco más de espacio */
+            gap: 24px;
+        }
+
+        @media (max-width: 860px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Paneles Generales */
+        .panel {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        h3 {
+            font-size: 1.15rem;
+            color: var(--black);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+            margin-top: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Panel Izquierdo: Detalles Técnicos */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--bg-body);
+            font-size: 0.9rem;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .val {
+            font-weight: 600;
+            color: var(--black);
+            text-align: right;
+        }
+
+        .val.highlight {
+            color: var(--primary-orange);
+            background-color: rgba(255, 107, 0, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .tech-desc {
+            margin-top: 24px;
+            background-color: var(--bg-body);
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 3px solid var(--border-color);
+        }
+
+        .tech-desc p {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 8px 0 0 0;
+        }
+
+        /* Mini-galería multimedia */
+        .mini-gallery {
+            margin-top: 32px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 24px;
+        }
+
+        .media-icons {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .m-icon {
+            width: 70px;
+            height: 50px;
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: transform 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .m-icon:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-orange);
+        }
+
+        .m-icon.video {
+            color: var(--ajustador);
+        }
+
+        .m-icon.doc {
+            color: #ef4444;
+        }
+
+        /* Panel Derecho: Chat Interactivo */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-grow: 1;
+            /* Ocupa el espacio restante */
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 24px;
+            padding-right: 12px;
+        }
+
+        /* Personalizar el scrollbar del chat */
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #d4d4d8;
+            border-radius: 4px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: #a1a1aa;
+        }
+
+        .msg {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 85%;
+        }
+
+        .msg.me {
+            align-self: flex-end;
+        }
+
+        .msg.other {
+            align-self: flex-start;
+        }
+
+        .msg-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            font-size: 0.75rem;
+            padding: 0 4px;
+        }
+
+        .msg.me .msg-header {
+            flex-direction: row-reverse;
+        }
+
+        /* Invierte el orden para el usuario actual */
+
+        .msg-author {
+            font-weight: 700;
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rol-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            color: var(--white);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .rb-asegurado {
+            background: var(--asegurado);
+        }
+
+        .rb-ajustador {
+            background: var(--ajustador);
+        }
+
+        .msg-time {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .msg-bubble {
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-main);
+            position: relative;
+        }
+
+        .msg.me .msg-bubble {
+            background: var(--chat-me-bg);
+            border: 1px solid var(--chat-me-border);
+            border-bottom-right-radius: 2px;
+            /* Esquina puntiaguda */
+        }
+
+        .msg.other .msg-bubble {
+            background: var(--chat-other-bg);
+            border: 1px solid var(--chat-other-border);
+            border-bottom-left-radius: 2px;
+            /* Esquina puntiaguda */
+        }
+
+        /* Área de escritura */
+        .chat-input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 14px;
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        textarea:focus {
+            background: var(--white);
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+        }
+
+        .btn-send {
+            align-self: flex-end;
+            padding: 12px 24px;
+            background-color: var(--primary-orange);
+            border: none;
+            border-radius: 8px;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-send:hover {
+            background-color: var(--primary-orange-hover);
+        }
+
+        .btn-send:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="#" class="back-link">
+        <span>←</span> Volver al listado de siniestros
+    </a>
+
+    <div class="container">
+
+        <div class="panel">
+            <h3>📋 Folio #SIN-101</h3>
+
+            <div class="info-row">
+                <span class="label">Estado Actual</span>
+                <span class="val highlight">Reparación Aprobada</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Compromiso (Reparación)</span>
+                <span class="val">15 / Mar / 2026</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Compromiso (Pago)</span>
+                <span class="val" style="color: var(--text-muted); font-weight: 400;">No aplica</span>
+            </div>
+
+            <div class="tech-desc">
+                <span class="label">Dictamen Técnico</span>
+                <p>Daño frontal por alcance. El taller reporta que se requieren refacciones importadas (fascia y faro
+                    izquierdo). Tiempo de espera estimado incluido en la fecha compromiso.</p>
+            </div>
+
+            <div class="mini-gallery">
+                <h3>📷 Archivos del Expediente</h3>
+                <div class="media-icons">
+                    <div class="m-icon" title="Ver foto">🚗</div>
+                    <div class="m-icon video" title="Ver video">📹</div>
+                    <div class="m-icon doc" title="Ver documento">📄</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>💬 Seguimiento e Interacción</h3>
+
+            <div class="chat-container">
+
+                <div class="msg other">
+                    <div class="msg-header">
+                        <span class="msg-author">
+                            María García
+                            <span class="rol-badge rb-asegurado">Asegurada</span>
+                        </span>
+                        <span class="msg-time">Ayer 15:30</span>
+                    </div>
+                    <div class="msg-bubble">
+                        Hola, buenas tardes. ¿Me podrían indicar cuál es el tiempo aproximado para que liberen mi
+                        automóvil del taller? Necesito organizarme para ir al trabajo.
+                    </div>
+                </div>
+
+                <div class="msg me">
+                    <div class="msg-header">
+                        <span class="msg-author">
+                            Carlos A.
+                            <span class="rol-badge rb-ajustador">Ajustador</span>
+                        </span>
+                        <span class="msg-time">Hoy 09:15</span>
+                    </div>
+                    <div class="msg-bubble">
+                        Buen día, María. He adjuntado el pago y el comprobante del deducible al expediente interno. El
+                        taller nos confirma que las refacciones llegan mañana. Prevemos que en la fecha compromiso (15
+                        de Marzo) quede totalmente liberado. Cualquier novedad te la comunico por esta vía.
+                    </div>
+                </div>
+
+                <div class="msg other">
+                    <div class="msg-header">
+                        <span class="msg-author">
+                            María García
+                            <span class="rol-badge rb-asegurado">Asegurada</span>
+                        </span>
+                        <span class="msg-time">Hoy 09:45</span>
+                    </div>
+                    <div class="msg-bubble">
+                        Perfecto, muchas gracias Carlos. Quedo al pendiente.
+                    </div>
+                </div>
+
+            </div>
+
+            <form action="#" class="chat-input-area" onsubmit="event.preventDefault();">
+                <textarea name="mensaje" rows="3" placeholder="Escribe tu mensaje o actualización aquí..."
+                    required></textarea>
+                <button type="submit" class="btn-send">
+                    Enviar Mensaje <span>📤</span>
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

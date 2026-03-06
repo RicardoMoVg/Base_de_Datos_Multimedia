@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Siniestros | SegurosPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- DESIGN SYSTEM --- */
+        :root {
+            --primary-orange: #ff6b00;
+            --primary-orange-hover: #e65c00;
+            --sidebar-bg: #111111;
+            /* Negro profundo para la navegación */
+            --sidebar-hover: #222222;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --bg-body: #f4f4f5;
+            /* Gris claro para el fondo de trabajo */
+            --border-color: #e4e4e7;
+            --text-main: #27272a;
+            --text-muted: #71717a;
+            --text-sidebar: #a1a1aa;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ——— SIDEBAR (Dark Mode) ——— */
+        .sidebar {
+            width: 260px;
+            /* Un poco más ancha para mejor lectura */
+            min-height: 100vh;
+            background-color: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 24px;
+            margin-bottom: 40px;
+        }
+
+        .sidebar-logo h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: -0.02em;
+        }
+
+        .sidebar-logo h1 span {
+            color: var(--primary-orange);
+        }
+
+        .nav-section {
+            font-size: 0.7rem;
+            color: #52525b;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            padding: 0 24px;
+            margin: 20px 0 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: var(--text-sidebar);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background-color: var(--sidebar-hover);
+            color: var(--white);
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 107, 0, 0.1);
+            color: var(--white);
+            border-left-color: var(--primary-orange);
+            font-weight: 600;
+        }
+
+        .nav-link .n-icon {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .nav-link.active .n-icon {
+            color: var(--primary-orange);
+            opacity: 1;
+        }
+
+        /* ——— MAIN CONTENT ——— */
+        .main {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--black);
+        }
+
+        .topbar-nav {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .topbar-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .topbar-nav a:hover {
+            color: var(--black);
+        }
+
+        .badge {
+            background-color: var(--black);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .content {
+            padding: 32px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .panel {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- FILTROS (Grid System) --- */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        label {
+            font-size: 0.75rem;
+            color: var(--black);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            background-color: #fafafa;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        select:focus {
+            background-color: var(--white);
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+        }
+
+        /* --- BOTONES --- */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-orange);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-orange-hover);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--bg-body);
+            border-color: #d4d4d8;
+        }
+
+        /* --- RESULTADOS --- */
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .siniestro-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+
+        .siniestro-card:hover {
+            border-color: var(--primary-orange);
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .s-info-main {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .s-id {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        .s-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            background-color: var(--bg-body);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .s-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .s-detail-item strong {
+            color: var(--black);
+            font-weight: 600;
+        }
+
+        /* --- EMPTY STATE --- */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--white);
+            border: 1px dashed #d4d4d8;
+            border-radius: 12px;
+            margin-top: 24px;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.1rem;
+            color: var(--black);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <h1>Seguros<span>Pro</span></h1>
+        </div>
+
+        <span class="nav-section">Principal</span>
+        <a class="nav-link" href="dash_supervisor.html"><span class="n-icon">📊</span> Dashboard</a>
+        <a class="nav-link" href="#"><span class="n-icon">👥</span> Ajustadores</a>
+        <a class="nav-link active" href="buscar_siniestros.html"><span class="n-icon">🔍</span> Buscar Siniestros</a>
+
+        <span class="nav-section">Reportes</span>
+        <a class="nav-link" href="#"><span class="n-icon">📈</span> Estadísticas</a>
+        <a class="nav-link" href="#"><span class="n-icon">📄</span> Informes</a>
+
+        <span class="nav-section">Administración</span>
+        <a class="nav-link" href="#"><span class="n-icon">⚙️</span> Configuración</a>
+        <a class="nav-link" href="login.html" style="margin-top: auto; border-top: 1px solid #333;"><span
+                class="n-icon">🚪</span> Cerrar Sesión</a>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <h2>Búsqueda de Siniestros</h2>
+            <div class="topbar-nav">
+                <a href="dash_supervisor.html">Dashboard</a>
+                <a href="buscar_siniestros.html" style="color:var(--black); font-weight:600;">Búsqueda</a>
+                <span class="badge">Supervisor</span>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <section class="panel">
+                <div class="section-header">
+                    <h3><span>🔍</span> Criterios de Búsqueda</h3>
+                </div>
+
+                <form id="searchForm" onsubmit="return handleSearch(event)">
+                    <div class="filter-grid">
+
+                        <div class="form-group">
+                            <label for="fecha_inicio">Fecha Inicio</label>
+                            <input type="date" id="fecha_inicio" name="fecha_inicio">
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha_fin">Fecha Fin</label>
+                            <input type="date" id="fecha_fin" name="fecha_fin">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="compania">Compañía de Seguros</label>
+                            <select id="compania" name="compania">
+                                <option value="">Selecciona una opción...</option>
+                                <option value="qualitas">Quálitas</option>
+                                <option value="gnp">GNP Seguros</option>
+                                <option value="axa">AXA</option>
+                                <option value="mapfre">Mapfre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="usuario">Usuario / Alias</label>
+                            <input type="text" id="usuario" placeholder="Ej. jperez">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="placas">Placas</label>
+                            <input type="text" id="placas" placeholder="Ej. ABC-123">
+                        </div>
+                        <div class="form-group">
+                            <label for="vin">Número de Serie (VIN)</label>
+                            <input type="text" id="vin" placeholder="17 caracteres">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <button type="button" class="btn btn-outline" onclick="clearResults();">Limpiar
+                                Filtros</button>
+                            <button type="submit" class="btn btn-primary">Realizar Búsqueda</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <section class="panel" id="resultadosPanel" style="display: none;">
+                <div class="section-header">
+                    <h3><span>📋</span> Resultados Encontrados <span
+                            style="font-size:0.85rem; color:var(--text-muted); font-weight:400; margin-left:8px;">(2
+                            registros)</span></h3>
+                </div>
+
+                <div class="results-container">
+                    <div class="siniestro-card">
+                        <div class="s-info-main">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span class="s-id">#SIN-2410</span>
+                                <span class="s-date">26 Feb, 2026</span>
+                            </div>
+                            <div class="s-details">
+                                <span class="s-detail-item"><strong>Usuario:</strong> carlos_a / rdiaz</span>
+                                <span class="s-detail-item"><strong>Cía:</strong> GNP Seguros</span>
+                                <span class="s-detail-item"><strong>Placas:</strong> XYZ-987</span>
+                            </div>
+                        </div>
+                        <a href="detalle_siniestro.html?id=2410" class="btn btn-outline"
+                            style="text-decoration:none;">Ver Detalles</a>
+                    </div>
+
+                    <div class="siniestro-card">
+                        <div class="s-info-main">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span class="s-id">#SIN-2388</span>
+                                <span class="s-date">10 Ene, 2026</span>
+                            </div>
+                            <div class="s-details">
+                                <span class="s-detail-item"><strong>Usuario:</strong> mgarcia</span>
+                                <span class="s-detail-item"><strong>Cía:</strong> AXA</span>
+                                <span class="s-detail-item"><strong>Placas:</strong> MNP-456</span>
+                            </div>
+                        </div>
+                        <a href="detalle_siniestro.html?id=2388" class="btn btn-outline"
+                            style="text-decoration:none;">Ver Detalles</a>
+                    </div>
+                </div>
+            </section>
+
+            <div class="empty-state" id="emptyState">
+                <div class="icon">📄</div>
+                <h3>Listo para buscar</h3>
+                <p>Ingresa tus criterios en el formulario de arriba y presiona "Realizar Búsqueda".</p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function handleSearch(e) {
+            e.preventDefault();
+            // Simulación visual: Ocultar el estado vacío y mostrar la lista de resultados
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('resultadosPanel').style.display = 'block';
+        }
+
+        function clearResults() {
+            // Limpia el formulario y vuelve al estado visual inicial
+            document.getElementById('searchForm').reset();
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('resultadosPanel').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
