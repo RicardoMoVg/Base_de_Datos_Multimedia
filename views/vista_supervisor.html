@@ -434,6 +434,7 @@
             animation: fadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
+    <link rel="stylesheet" href="topbar_global.css">
 </head>
 
 <body>
@@ -444,9 +445,11 @@
                 <h1>Seguros<span>Pro</span></h1>
             </a>
             <nav class="topbar-nav">
-                <a href="dash_supervisor.html">Dashboard</a>
-                <a href="#">Ajustadores</a>
-                <a class="active" href="#">Todos los Siniestros</a>
+                <a href="dash_supervisor.html">Panel de Control</a>
+                <a class="active" href="vista_supervisor.html">Autorizaciones</a>
+                <a href="historial_global.html">Historial Global</a>
+                <a href="busqueda_avanzada.html">Búsqueda Avanzada</a>
+                <a href="gestion_reparaciones.html">Gestión Reparaciones</a>
             </nav>
         </div>
         <div class="topbar-right">
@@ -458,8 +461,7 @@
                 </div>
                 <div class="avatar">LS</div>
             </div>
-            <a href="login.html" class="btn btn-outline"
-                style="padding: 6px 12px; font-size:0.8rem; color: white; border-color: #333;">Salir</a>
+            <a href="login.html" class="btn-logout" onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
         </div>
     </header>
 
@@ -515,126 +517,448 @@
                     style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">
                     Descripción de los hechos (Ajustador)</div>
                 <p>Colisión frontal en cruce de semáforo. El vehículo asegurado impactó con una unidad particular que no
-                    respetó el semáforo en rojo. Hay daños estructurales considerables en fascia, parrilla y radiador.
-                    Se anexan fotografías del peritaje.</p>
+                    </nav>
             </div>
-        </div>
-
-        <div class="panel">
-            <div class="section-header">
-                <h3>📁 Documentación y Evidencia Recabada</h3>
+            <div class="topbar-right">
+                <span class="badge-role">Supervisor</span>
+                <div class="user-badge">
+                    <div class="user-info">
+                        <strong>Laura S.</strong>
+                        <small>Autorización Múltiple</small>
+                    </div>
+                    <div class="avatar">LS</div>
+                </div>
+                <a href="login.html" class="btn btn-outline"
+                    style="padding: 6px 12px; font-size:0.8rem; color: white; border-color: #333;">Salir</a>
             </div>
+            </header>
 
-            <div class="doc-item">
-                <div class="doc-icon">📸</div>
-                <div class="doc-info">
-                    <div class="doc-name">Evidencia_Frontal_Peritaje.jpg</div>
-                    <div class="doc-meta">Subido por Carlos A. · 2.4 MB · 26 Feb</div>
-                </div>
-                <a href="#" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.8rem;">Ver Archivo</a>
-            </div>
+            <main class="main-content">
 
-            <div class="doc-item">
-                <div class="doc-icon">📄</div>
-                <div class="doc-info">
-                    <div class="doc-name">Declaracion_Ajustador_Oficial.pdf</div>
-                    <div class="doc-meta">Subido por Carlos A. · 1.1 MB · 27 Feb</div>
-                </div>
-                <a href="#" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.8rem;">Leer Reporte</a>
-            </div>
-        </div>
+                <a href="dash_supervisor.html" class="back-link">
+                    <span>←</span> Volver al Dashboard Operativo
+                </a>
 
-        <div class="panel" style="border-top: 4px solid var(--black);">
-            <div class="section-header">
-                <h3>⚖️ Emitir Dictamen Oficial</h3>
-            </div>
-
-            <form id="resolucionForm" onsubmit="return handleResolucion(event)">
-                <div class="form-group">
-                    <label for="estadoSiniestro">Resolución del Siniestro *</label>
-                    <select id="estadoSiniestro" required>
-                        <option value="" disabled selected>-- Selecciona un dictamen --</option>
-                        <option value="rechazado">Rechazado (Improcedente)</option>
-                        <option value="aceptado_con_deducible">Aceptado con pago de deducible</option>
-                        <option value="aceptado_sin_deducible">Aceptado sin pago de deducible</option>
-                        <option value="reparacion">Aplica pago directo para reparación de unidad</option>
-                        <option value="perdida_total">Pérdida Total (Aplica indemnización de la unidad)</option>
-                    </select>
+                <div class="page-header">
+                    <h2>Revisión de Siniestro</h2>
                 </div>
 
-                <div class="form-group conditional-field" id="contenedorTerminacionReparacion" style="display: none;">
-                    <label for="fechaTerminacion">Fecha Compromiso del Taller (Reparación) *</label>
-                    <input type="date" id="fechaTerminacion">
+                <div class="notice-box">
+                    <p><strong>Atención Requerida:</strong> Estás a punto de emitir un dictamen oficial. Asegúrate de
+                        haber
+                        revisado toda la evidencia proporcionada por el ajustador antes de guardar la resolución.</p>
                 </div>
 
-                <div class="form-group conditional-field" id="contenedorPagoSiniestro" style="display: none;">
-                    <label for="fechaPago">Fecha Programada de Transferencia/Pago *</label>
-                    <input type="date" id="fechaPago">
+                <div class="panel">
+                    <div class="section-header">
+                        <h3>� Ficha Técnica #SIN-2410</h3>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="label">Asegurado Titular</div>
+                            <div class="val">Roberto Díaz</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Número de Póliza</div>
+                            <div class="val">POL-884920</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Tipo de Siniestro</div>
+                            <div class="val">Automóvil (Colisión)</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Fecha del Incidente</div>
+                            <div class="val">26 de Feb, 2026</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Ajustador Asignado</div>
+                            <div class="val">Carlos A.</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="label">Estado Actual</div>
+                            <div class="val highlight">Evaluación Pendiente</div>
+                        </div>
+                    </div>
+
+                    <div class="desc-box">
+                        <div class="label"
+                            style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">
+                            Descripción de los hechos (Ajustador)</div>
+                        <p>Colisión frontal en cruce de semáforo. El vehículo asegurado impactó con una unidad
+                            particular que no
+                            respetó el semáforo en rojo. Hay daños estructurales considerables en fascia, parrilla y
+                            radiador.
+                            Se anexan fotografías del peritaje.</p>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="notasSupervisor">Notas de Auditoría (Internas)</label>
-                    <textarea id="notasSupervisor" rows="4"
-                        placeholder="Justifica la decisión tomada. Estas notas solo serán visibles para el equipo interno y auditoría..."></textarea>
+                <!-- Multimedia Gallery del Ajustador -->
+                <style>
+                    /* Estilos de la Galería Multimedia y Uploader Supervisor */
+                    .gallery-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                        gap: 16px;
+                        margin-top: 16px;
+                    }
+
+                    .gallery-item {
+                        position: relative;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        aspect-ratio: 1;
+                        border: 1px solid var(--border-color);
+                        cursor: pointer;
+                        transition: transform 0.2s, box-shadow 0.2s;
+                        background: #f8fafc;
+                    }
+
+                    .gallery-item:hover {
+                        transform: scale(1.03);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .gallery-item img,
+                    .gallery-item video {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+
+                    .gallery-item.doc-file {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 12px;
+                        text-align: center;
+                    }
+
+                    .gallery-item.doc-file span {
+                        margin-top: 8px;
+                        font-size: 0.75rem;
+                        color: var(--text-muted);
+                        font-weight: 600;
+                        word-break: break-all;
+                    }
+
+                    /* Uploader Supervisor */
+                    .uploader-area {
+                        border: 2px dashed #cbd5e1;
+                        border-radius: 12px;
+                        background-color: #f8fafc;
+                        padding: 32px 20px;
+                        text-align: center;
+                        transition: all 0.3s ease;
+                        cursor: pointer;
+                        position: relative;
+                        margin-top: 8px;
+                    }
+
+                    .uploader-area:hover,
+                    .uploader-area.dragover {
+                        border-color: var(--primary-orange);
+                        background-color: #fff7ed;
+                    }
+
+                    .uploader-area.dragover {
+                        transform: scale(1.02);
+                    }
+
+                    .uploader-icon {
+                        font-size: 32px;
+                        margin-bottom: 12px;
+                    }
+
+                    .uploader-text h4 {
+                        font-size: 1rem;
+                        font-weight: 600;
+                        color: var(--black);
+                        margin-bottom: 4px;
+                    }
+
+                    .uploader-text p {
+                        font-size: 0.8rem;
+                        color: var(--text-muted);
+                        margin: 0;
+                    }
+
+                    #fileInputSup {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        opacity: 0;
+                        cursor: pointer;
+                    }
+
+                    .preview-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                        gap: 12px;
+                        margin-top: 16px;
+                    }
+
+                    .preview-item {
+                        position: relative;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        border: 1px solid var(--border-color);
+                        aspect-ratio: 1;
+                        background: var(--white);
+                    }
+
+                    .preview-item img,
+                    .preview-item video {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+
+                    .remove-btn {
+                        position: absolute;
+                        top: 4px;
+                        right: 4px;
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 50%;
+                        background: rgba(0, 0, 0, 0.6);
+                        color: white;
+                        border: none;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 10px;
+                        cursor: pointer;
+                        z-index: 10;
+                    }
+
+                    .remove-btn:hover {
+                        background: var(--danger);
+                    }
+                </style>
+
+                <div class="panel">
+                    <div class="section-header">
+                        <h3>� Galería Multimedia del Ajustador</h3>
+                    </div>
+
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+                        Revisa exhaustivamente las fotografías, videos y documentos recolectados en el lugar del
+                        siniestro.
+                    </p>
+
+                    <div class="gallery-grid">
+                        <div class="gallery-item" onclick="alert('Abriendo visor de imagen en alta resolución...')">
+                            <img src="https://via.placeholder.com/400x400?text=Evidencia+Frontal" alt="Frontal">
+                        </div>
+                        <div class="gallery-item" onclick="alert('Abriendo visor de imagen en alta resolución...')">
+                            <img src="https://via.placeholder.com/400x400?text=Afectación+Tercero" alt="Lateral">
+                        </div>
+                        <div class="gallery-item" onclick="alert('Reproduciendo video...')">
+                            <!-- Ícono de Play superpuesto -->
+                            <div
+                                style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2rem; color:white; text-shadow:0 2px 4px rgba(0,0,0,0.5); z-index:5;">
+                                ▶</div>
+                            <img src="https://via.placeholder.com/400x400/333/fff?text=Video+Declaración" alt="Video">
+                        </div>
+                        <div class="gallery-item doc-file" onclick="alert('Descargando o abriendo PDF...')">
+                            <div style="font-size: 2.5rem; margin-bottom: 8px;">📑</div>
+                            <span>Declaracion_Oficial.pdf</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div
-                    style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-color);">
-                    <button type="button" class="btn btn-outline" style="padding: 12px 24px;">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" style="padding: 12px 24px;">Firma y Guardar
-                        Resolución</button>
+                <div class="panel" style="border-top: 4px solid var(--black);">
+                    <div class="section-header">
+                        <h3>⚖️ Emitir Dictamen Oficial</h3>
+                    </div>
+
+                    <form id="resolucionForm" onsubmit="return handleResolucion(event)">
+                        <div class="form-group">
+                            <label for="estadoSiniestro">Resolución del Siniestro *</label>
+                            <select id="estadoSiniestro" required>
+                                <option value="" disabled selected>-- Selecciona un dictamen --</option>
+                                <option value="rechazado">Rechazado</option>
+                                <option value="aceptado">Aceptado</option>
+                                <option value="aceptado_con_deducible">Aceptado con pago de deducible</option>
+                                <option value="aceptado_sin_deducible">Aceptado sin pago de deducible</option>
+                                <option value="reparacion">Aplica pago para reparación</option>
+                                <option value="perdida_total">Pérdida total</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group conditional-field" id="contenedorFechaCompromiso" style="display: none;">
+                            <label id="labelFechaCompromiso" for="fechaCompromiso">Fecha Compromiso *</label>
+                            <input type="date" id="fechaCompromiso">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notasSupervisor">Notas de Auditoría (Internas)</label>
+                            <textarea id="notasSupervisor" rows="4"
+                                placeholder="Justifica la decisión tomada. Estas notas solo serán visibles para el equipo interno y auditoría..."></textarea>
+                        </div>
+
+                        <!-- Carga de Evidencia del Supervisor -->
+                        <div class="form-group" style="margin-top: 24px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <span>Subir Evidencia de Supervisión/Reparación Terminada</span>
+                            </label>
+                            <div class="uploader-area" id="dropzoneSup">
+                                <input type="file" id="fileInputSup" multiple
+                                    accept="image/*, video/*, application/pdf">
+                                <div class="uploader-icon">📁</div>
+                                <div class="uploader-text">
+                                    <h4>Arrastra evidencia final aquí</h4>
+                                    <p>Fotos de unidad reparada, comprobantes de pago/transferencia, etc.</p>
+                                </div>
+                            </div>
+                            <div class="preview-grid" id="previewContainerSup"></div>
+                        </div>
+
+                        <div
+                            style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-color);">
+                            <button type="button" class="btn btn-outline" style="padding: 12px 24px;"
+                                onclick="window.location.href='dash_supervisor.html'">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" style="padding: 12px 24px;"
+                                id="btnGuardar">Firma y Guardar
+                                Resolución</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
 
-    </main>
+            </main>
 
-    <script>
-        const estadoSelect = document.getElementById('estadoSiniestro');
-        const contReparacion = document.getElementById('contenedorTerminacionReparacion');
-        const contPago = document.getElementById('contenedorPagoSiniestro');
-        const fechaTerminacion = document.getElementById('fechaTerminacion');
-        const fechaPago = document.getElementById('fechaPago');
+            <script>
+                const estadoSelect = document.getElementById('estadoSiniestro');
+                const contFecha = document.getElementById('contenedorFechaCompromiso');
+                const labelFecha = document.getElementById('labelFechaCompromiso');
+                const fechaCompromiso = document.getElementById('fechaCompromiso');
 
-        // Lógica de Revelación Progresiva (Progressive Disclosure)
-        estadoSelect.addEventListener('change', function () {
-            const val = this.value;
+                // Lógica de Revelación Progresiva (Progressive Disclosure) para la Fecha
+                estadoSelect.addEventListener('change', function () {
+                    const val = this.value;
 
-            // Reset visual state
-            contReparacion.style.display = 'none';
-            contPago.style.display = 'none';
-            fechaTerminacion.removeAttribute('required');
-            fechaPago.removeAttribute('required');
+                    // Reset
+                    contFecha.style.display = 'none';
+                    fechaCompromiso.removeAttribute('required');
 
-            // Caso: Reparación
-            if (val === 'reparacion') {
-                contReparacion.style.display = 'flex'; // Usamos flex por el form-group
-                fechaTerminacion.setAttribute('required', 'true');
-            }
+                    // Caso: Aprobaciones que requieran fecha de pago o entrega
+                    if (val !== 'rechazado' && val !== '') {
+                        contFecha.style.display = 'flex';
+                        fechaCompromiso.setAttribute('required', 'true');
 
-            // Caso: Pérdida Total
-            if (val === 'perdida_total') {
-                contPago.style.display = 'flex';
-                fechaPago.setAttribute('required', 'true');
-            }
-        });
+                        // Cambiamos el label dependiendo del contexto
+                        if (val === 'reparacion') {
+                            labelFecha.innerText = 'Fecha Programada de Entrega de Reparación *';
+                        } else {
+                            labelFecha.innerText = 'Fecha Programada de Pago / Indemnización *';
+                        }
+                    }
+                });
 
-        function handleResolucion(e) {
-            e.preventDefault();
-            const estadoTexto = estadoSelect.options[estadoSelect.selectedIndex].text;
-            let mensaje = "✅ Resolución guardada y firmada exitosamente.\n\nDictamen Oficial:\n" + estadoTexto;
+                function handleResolucion(e) {
+                    e.preventDefault();
 
-            if (estadoSelect.value === 'reparacion') {
-                mensaje += "\n\nFecha Compromiso: " + fechaTerminacion.value;
-            } else if (estadoSelect.value === 'perdida_total') {
-                mensaje += "\n\nFecha Programada de Pago: " + fechaPago.value;
-            }
+                    // UX feedback
+                    const btn = document.getElementById('btnGuardar');
+                    btn.innerHTML = 'Guardando Resolución...';
+                    btn.disabled = true;
 
-            alert(mensaje);
-            // Redirigir al dashboard
-            window.location.href = 'dash_supervisor.html';
-        }
-    </script>
+                    const estadoTexto = estadoSelect.options[estadoSelect.selectedIndex].text;
+                    let mensaje = "✅ Resolución guardada y firmada exitosamente.\n\nDictamen Oficial:\n" + estadoTexto;
+
+                    if (contFecha.style.display === 'flex') {
+                        mensaje += "\n\nFecha Establecida: " + fechaCompromiso.value;
+                    }
+                    if (selectedFilesSup.length > 0) {
+                        mensaje += `\n\nSe adjuntaron ${selectedFilesSup.length} archivos de evidencia.`;
+                    }
+
+                    setTimeout(() => {
+                        alert(mensaje);
+                        window.location.href = 'dash_supervisor.html';
+                    }, 1000);
+                }
+
+                // --- SISTEMA DE UPLOAD DEL SUPERVISOR ---
+                const dropzoneSup = document.getElementById('dropzoneSup');
+                const fileInputSup = document.getElementById('fileInputSup');
+                const previewContainerSup = document.getElementById('previewContainerSup');
+                let selectedFilesSup = [];
+
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropzoneSup.addEventListener(eventName, e => {
+                        e.preventDefault(); e.stopPropagation();
+                    }, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => dropzoneSup.addEventListener(eventName, () => dropzoneSup.classList.add('dragover'), false));
+                ['dragleave', 'drop'].forEach(eventName => dropzoneSup.addEventListener(eventName, () => dropzoneSup.classList.remove('dragover'), false));
+
+                dropzoneSup.addEventListener('drop', e => handleFilesSup(e.dataTransfer.files), false);
+                fileInputSup.addEventListener('change', e => handleFilesSup(e.target.files));
+
+                function handleFilesSup(files) {
+                    [...files].forEach(file => {
+                        // Validación tamaño 20MB max
+                        if (file.size > 20 * 1024 * 1024) {
+                            alert('El archivo ' + file.name + ' supera el límite de 20MB permitidos.');
+                            return;
+                        }
+
+                        if (selectedFilesSup.find(f => f.name === file.name)) return;
+                        selectedFilesSup.push(file);
+
+                        const item = document.createElement('div');
+                        item.className = 'preview-item';
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-btn';
+                        removeBtn.innerHTML = '✕';
+                        removeBtn.title = 'Eliminar archivo';
+                        removeBtn.onclick = (ev) => {
+                            ev.preventDefault();
+                            selectedFilesSup = selectedFilesSup.filter(f => f.name !== file.name);
+                            item.remove();
+                        };
+                        item.appendChild(removeBtn);
+
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = e => {
+                                const img = document.createElement('img');
+                                img.src = e.target.result;
+                                item.appendChild(img);
+                            };
+                            reader.readAsDataURL(file);
+                        } else if (file.type.startsWith('video/')) {
+                            const vid = document.createElement('video');
+                            vid.src = URL.createObjectURL(file);
+                            vid.style.width = '100%';
+                            vid.style.height = '100%';
+                            vid.style.objectFit = 'cover';
+                            vid.style.background = '#000';
+                            item.appendChild(vid);
+                        } else {
+                            const docInfo = document.createElement('div');
+                            docInfo.className = 'doc-file';
+                            docInfo.style.height = '100%';
+                            docInfo.style.display = 'flex';
+                            docInfo.style.flexDirection = 'column';
+                            docInfo.style.alignItems = 'center';
+                            docInfo.style.justifyContent = 'center';
+                            docInfo.style.background = '#f1f5f9';
+                            docInfo.innerHTML = `<span style="font-size:20px; margin-bottom: 4px;">📑</span><span style="font-size:10px; text-align:center; padding: 0 4px; word-break: break-all;">${file.name}</span>`;
+                            item.appendChild(docInfo);
+                        }
+                        previewContainerSup.appendChild(item);
+                    });
+                    fileInputSup.value = ""; // reset
+                }
+            </script>
 </body>
 
 </html>

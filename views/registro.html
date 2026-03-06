@@ -5,19 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Usuario | SegurosPro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
-        /* --- DESIGN SYSTEM --- */
         :root {
             --primary-orange: #ff6b00;
             --primary-orange-hover: #e65c00;
             --black: #1a1a1a;
             --white: #ffffff;
-            --bg-body: #f4f4f5;
+            --bg-body: #f8f9fa;
             --border-color: #e4e4e7;
             --text-main: #27272a;
             --text-muted: #71717a;
             --input-bg: #fafafa;
+            --error-bg: #fff1f2;
+            --error-border: #fda4af;
+            --error-text: #be123c;
+            --success-bg: #f0fdf4;
+            --success-border: #86efac;
+            --success-text: #15803d;
         }
 
         *,
@@ -35,37 +41,62 @@
             align-items: center;
             justify-content: center;
             padding: 40px 16px;
-            /* Fondo consistente con la pantalla de Login */
-            background: radial-gradient(circle at top right, #ffffff, var(--bg-body));
+            background-color: var(--bg-body);
             color: var(--text-main);
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Detalle visual de fondo */
-        body::before {
-            content: '';
+        /* ── Elementos Decorativos Animados (Blobs) ── */
+        .blob {
             position: absolute;
-            top: -20vh;
-            left: -10vw;
-            width: 50vw;
-            height: 50vw;
-            background: linear-gradient(135deg, rgba(255, 107, 0, 0.05), transparent);
             border-radius: 50%;
+            filter: blur(60px);
             z-index: 0;
+            animation: float 12s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.5;
             pointer-events: none;
         }
 
-        /* Tarjeta de Registro */
+        .blob-1 {
+            top: -15vh;
+            left: -10vw;
+            width: 50vw;
+            height: 50vw;
+            background: rgba(255, 107, 0, 0.15);
+        }
+
+        .blob-2 {
+            bottom: -20vh;
+            right: -10vw;
+            width: 60vw;
+            height: 60vw;
+            background: rgba(255, 170, 0, 0.08);
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(3vw, 5vh) scale(1.05);
+            }
+        }
+
+        /* ── Tarjeta Principal (Glassmorphism) ── */
         .register-card {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
             padding: 48px 40px;
             width: 100%;
             max-width: 580px;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
-            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(228, 228, 231, 0.5);
+            animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             z-index: 1;
         }
@@ -73,7 +104,7 @@
         @keyframes fadeUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
 
             to {
@@ -88,10 +119,10 @@
         }
 
         .logo h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--black);
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
         }
 
         .logo h1 span {
@@ -101,10 +132,63 @@
         .logo p {
             font-size: 0.95rem;
             color: var(--text-muted);
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
-        /* Títulos de Sección */
+        /* ── Banners de feedback ── */
+        .msg-banner {
+            display: none;
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .msg-banner.error {
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
+            color: var(--error-text);
+            animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        .msg-banner.success {
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-text);
+            animation: fadeUp 0.4s ease forwards;
+        }
+
+        .msg-banner.visible {
+            display: block;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-2px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(4px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-6px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(6px, 0, 0);
+            }
+        }
+
+        /* ── Formularios y Grid ── */
         .section-title {
             font-size: 0.75rem;
             color: var(--text-muted);
@@ -121,10 +205,9 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: var(--border-color);
+            background: rgba(228, 228, 231, 0.5);
         }
 
-        /* Sistema de Grid para Formularios */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -144,9 +227,11 @@
         label {
             display: block;
             font-size: 0.8rem;
-            color: var(--black);
+            color: var(--text-main);
             margin-bottom: 8px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         input,
@@ -155,11 +240,11 @@
             padding: 12px 14px;
             background: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             color: var(--text-main);
             font-size: 0.95rem;
             font-family: 'Inter', sans-serif;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             outline: none;
         }
 
@@ -171,10 +256,16 @@
         select:focus {
             background: var(--white);
             border-color: var(--primary-orange);
-            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+            transform: translateY(-1px);
         }
 
-        /* Ajuste especial para el input type="file" */
+        input.input-error,
+        select.input-error {
+            border-color: var(--error-border);
+            background: var(--error-bg);
+        }
+
         input[type="file"] {
             padding: 9px 12px;
             background: var(--white);
@@ -183,7 +274,6 @@
             cursor: pointer;
         }
 
-        /* Estilizar el botón "Elegir archivo" nativo */
         input[type="file"]::file-selector-button {
             background-color: var(--bg-body);
             border: 1px solid var(--border-color);
@@ -201,6 +291,32 @@
             background-color: #e4e4e7;
         }
 
+        /* ── Indicador de fuerza de contraseña ── */
+        .pwd-strength {
+            margin-top: 8px;
+        }
+
+        .pwd-strength-bar {
+            height: 4px;
+            border-radius: 4px;
+            background: var(--border-color);
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .pwd-strength-fill {
+            height: 100%;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .pwd-strength-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
         .req-hint {
             font-size: 0.75rem;
             color: var(--text-muted);
@@ -208,35 +324,64 @@
             line-height: 1.4;
         }
 
-        /* Botón Principal */
+        /* ── Botones y Footers ── */
         .btn-primary {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             background-color: var(--primary-orange);
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             color: var(--white);
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: all 0.3s ease;
             letter-spacing: 0.02em;
             margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background-color: var(--primary-orange-hover);
+            box-shadow: 0 6px 16px rgba(255, 107, 0, 0.3);
+            transform: translateY(-2px);
         }
 
-        .btn-primary:active {
+        .btn-primary:active:not(:disabled) {
             transform: scale(0.98);
         }
 
-        /* Enlaces del Footer */
+        .btn-primary:disabled {
+            background-color: #a1a1aa;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .footer-links {
             text-align: center;
-            margin-top: 24px;
-            font-size: 0.9rem;
+            margin-top: 32px;
+            font-size: 0.95rem;
             color: var(--text-muted);
         }
 
@@ -251,16 +396,29 @@
             color: var(--primary-orange);
         }
     </style>
+    <link rel="stylesheet" href="topbar_global.css">
 </head>
 
 <body>
+    <header class="topbar">
+        <div class="topbar-left">
+            <a href="login.html" class="topbar-logo">
+                <h1>Seguros<span>Pro</span></h1>
+            </a>
+        </div>
+    </header>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
     <div class="register-card">
         <div class="logo">
             <h1>Seguros<span>Pro</span></h1>
             <p>Crear una nueva cuenta</p>
         </div>
 
-        <form id="registroForm" action="#" method="post" onsubmit="return handleRegistro(event)">
+        <div id="msgBanner" class="msg-banner" role="alert"></div>
+
+        <form id="registroForm" novalidate>
 
             <div class="section-title">Información Personal</div>
 
@@ -283,17 +441,18 @@
                 <div class="form-group">
                     <label for="genero">Género</label>
                     <select id="genero" name="genero" required>
-                        <option value="" disabled selected>Selecciona una opción...</option>
+                        <option value="" disabled selected>Selecciona...</option>
                         <option value="masculino">Masculino</option>
                         <option value="femenino">Femenino</option>
-                        <option value="otro">Otro</option>
+                        <option value="otro">Otro / Prefiero no decir</option>
                     </select>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="foto">Foto de Perfil</label>
-                <input type="file" id="foto" name="foto" accept="image/*" required>
+                <label for="foto">Foto de Perfil <span
+                        style="color:var(--text-muted);font-weight:400; text-transform: none;">(máx. 2MB)</span></label>
+                <input type="file" id="foto" name="foto" accept="image/jpeg,image/png,image/webp">
             </div>
 
             <div class="grid-2">
@@ -303,7 +462,7 @@
                 </div>
                 <div class="form-group">
                     <label for="telefono">Teléfono</label>
-                    <input type="tel" id="telefono" name="telefono" placeholder="10 dígitos">
+                    <input type="tel" id="telefono" name="telefono" placeholder="10 dígitos" maxlength="15">
                 </div>
             </div>
 
@@ -331,6 +490,12 @@
                     <label for="password">Contraseña</label>
                     <input type="password" id="password" name="password" placeholder="••••••••" required
                         autocomplete="new-password">
+                    <div class="pwd-strength">
+                        <div class="pwd-strength-bar">
+                            <div class="pwd-strength-fill" id="pwdFill"></div>
+                        </div>
+                        <span class="pwd-strength-label" id="pwdLabel"></span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="confirmar">Confirmar Contraseña</label>
@@ -338,9 +503,13 @@
                         autocomplete="new-password">
                 </div>
             </div>
-            <p class="req-hint">Mínimo 8 caracteres. Debe incluir mayúscula, minúscula, número y símbolo especial.</p>
+            <p class="req-hint">Mínimo 8 caracteres. Debe incluir mayúscula, minúscula, número y símbolo (ej. @, #, $).
+            </p>
 
-            <button type="submit" class="btn-primary">Registrar Cuenta</button>
+            <button type="submit" class="btn-primary" id="submitBtn">
+                <span id="submitBtnText">Registrar Cuenta</span>
+                <span class="spinner" id="submitSpinner"></span>
+            </button>
         </form>
 
         <div class="footer-links">
@@ -349,47 +518,181 @@
     </div>
 
     <script>
-        function handleRegistro(e) {
-            e.preventDefault();
+        // ── Helpers UI ────────────────────────────────────────────────────────
+        const banner = document.getElementById('msgBanner');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitBtnText');
+        const spinner = document.getElementById('submitSpinner');
 
+        function mostrarMensaje(msg, tipo = 'error') {
+            banner.textContent = msg;
+            banner.className = `msg-banner ${tipo} visible`;
+            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function limpiarMensaje() {
+            banner.className = 'msg-banner';
+            document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+        }
+
+        function marcarError(id) {
+            document.getElementById(id)?.classList.add('input-error');
+        }
+
+        function setLoading(on) {
+            submitBtn.disabled = on;
+            submitText.textContent = on ? 'Registrando...' : 'Registrar Cuenta';
+            spinner.style.display = on ? 'block' : 'none';
+        }
+
+        // ── Indicador de fuerza de contraseña ────────────────────────────────
+        const pwdInput = document.getElementById('password');
+        const pwdFill = document.getElementById('pwdFill');
+        const pwdLabel = document.getElementById('pwdLabel');
+
+        pwdInput.addEventListener('input', () => {
+            const v = pwdInput.value;
+            let score = 0;
+            if (v.length >= 8) score++;
+            if (/[A-Z]/.test(v)) score++;
+            if (/[a-z]/.test(v)) score++;
+            if (/\d/.test(v)) score++;
+            if (/[^A-Za-z0-9]/.test(v)) score++;
+
+            const levels = [
+                { pct: '0%', color: '', label: '' },
+                { pct: '25%', color: '#ef4444', label: 'Muy débil' },
+                { pct: '50%', color: '#f97316', label: 'Débil' },
+                { pct: '75%', color: '#eab308', label: 'Aceptable' },
+                { pct: '90%', color: '#22c55e', label: 'Fuerte' },
+                { pct: '100%', color: '#16a34a', label: '¡Excelente!' },
+            ];
+
+            const lvl = levels[score] || levels[0];
+            pwdFill.style.width = lvl.pct;
+            pwdFill.style.backgroundColor = lvl.color;
+            pwdLabel.textContent = lvl.label;
+            pwdLabel.style.color = lvl.color;
+        });
+
+        // ── Submit ────────────────────────────────────────────────────────────
+        document.getElementById('registroForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            limpiarMensaje();
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const apellido = document.getElementById('apellido').value.trim();
+            const dob = document.getElementById('fecha_nacimiento').value;
+            const genero = document.getElementById('genero').value;
+            const email = document.getElementById('email').value.trim();
+            const alias = document.getElementById('alias').value.trim();
+            const rol = document.getElementById('rol').value;
             const pwd = document.getElementById('password').value;
             const confirm = document.getElementById('confirmar').value;
+            const foto = document.getElementById('foto').files[0];
 
-            // Validación de Contraseñas
+            if (!nombre || !apellido) {
+                mostrarMensaje('Nombre y apellido son obligatorios.');
+                marcarError('nombre'); marcarError('apellido');
+                return;
+            }
+
+            if (!dob) {
+                mostrarMensaje('La fecha de nacimiento es obligatoria.');
+                marcarError('fecha_nacimiento');
+                return;
+            }
+
+            const hoy = new Date();
+            const nacimiento = new Date(dob);
+            let edad = hoy.getFullYear() - nacimiento.getFullYear();
+            const m = hoy.getMonth() - nacimiento.getMonth();
+            if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
+            if (edad < 18) {
+                mostrarMensaje('Debes ser mayor de 18 años para registrarte.');
+                marcarError('fecha_nacimiento');
+                return;
+            }
+
+            if (!genero) {
+                mostrarMensaje('Selecciona un género.');
+                marcarError('genero');
+                return;
+            }
+
+            if (!email) {
+                mostrarMensaje('El correo electrónico es obligatorio.');
+                marcarError('email');
+                return;
+            }
+
+            if (!alias) {
+                mostrarMensaje('El alias de usuario es obligatorio.');
+                marcarError('alias');
+                return;
+            }
+
+            if (!rol) {
+                mostrarMensaje('Debes seleccionar un rol.');
+                marcarError('rol');
+                return;
+            }
+
+            if (foto) {
+                const tiposValidos = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!tiposValidos.includes(foto.type)) {
+                    mostrarMensaje('La foto debe ser JPG, PNG o WEBP.');
+                    marcarError('foto');
+                    return;
+                }
+                if (foto.size > 2 * 1024 * 1024) {
+                    mostrarMensaje('La foto no puede superar los 2MB.');
+                    marcarError('foto');
+                    return;
+                }
+            }
+
             if (pwd !== confirm) {
-                alert('⚠️ Las contraseñas no coinciden. Por favor, verifica.');
-                return false;
+                mostrarMensaje('Las contraseñas no coinciden.');
+                marcarError('password'); marcarError('confirmar');
+                return;
             }
 
-            // Validación de Edad (Mayor de 18 años)
-            const dob = document.getElementById('fecha_nacimiento').value;
-            if (dob) {
-                const birthDate = new Date(dob);
-                const today = new Date();
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const m = today.getMonth() - birthDate.getMonth();
-
-                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                    age--;
-                }
-
-                if (age < 18) {
-                    alert('⚠️ Debes ser mayor de 18 años para registrarte en el sistema.');
-                    return false;
-                }
-            }
-
-            // Validación de Fuerza de Contraseña mediante Regex
             const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
             if (!pwdRegex.test(pwd)) {
-                alert('⚠️ La contraseña es muy débil. Asegúrate de cumplir con los requisitos mencionados.');
-                return false;
+                mostrarMensaje('La contraseña es débil. Usa mayúscula, minúscula, número y símbolo (ej. SegurosPro123!).');
+                marcarError('password');
+                return;
             }
 
-            // Si pasa todas las validaciones
-            alert('✅ Registro exitoso. Redirigiendo al inicio de sesión...');
-            location.href = 'login.html';
-        }
+            setLoading(true);
+            const formData = new FormData(this);
+
+            try {
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    mostrarMensaje('✅ ' + data.message + ' Redirigiendo al login...', 'success');
+                    this.reset();
+                    pwdFill.style.width = '0%';
+                    pwdLabel.textContent = '';
+                    setTimeout(() => location.href = 'login.html', 2500);
+                } else {
+                    mostrarMensaje('❌ ' + (data.message || 'Error al registrar.'));
+                }
+
+            } catch (err) {
+                console.error('Error en registro:', err);
+                mostrarMensaje('No se pudo conectar al servidor. Verifica que Node.js esté corriendo.');
+            } finally {
+                setLoading(false);
+            }
+        });
     </script>
 </body>
 

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Pagos | SegurosPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="topbar_global.css">
+    <style>
+        :root {
+            --primary-orange: #ff6b00;
+            --primary-orange-hover: #e65c00;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --bg-body: #f4f4f5;
+            --border-color: #e4e4e7;
+            --text-main: #27272a;
+            --text-muted: #71717a;
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --success-text: #065f46;
+            --warning-bg: #fef3c7;
+            --warning-text: #92400e;
+            --danger-bg: #fee2e2;
+            --danger-text: #991b1b;
+            --info-bg: #dbeafe;
+            --info-text: #1e40af;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── PAGE LAYOUT ─────────────────────────── */
+        .page-content {
+            max-width: 1100px;
+            margin: 36px auto;
+            padding: 0 24px;
+            width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .page-header-text h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--black);
+            letter-spacing: -0.02em;
+        }
+
+        .page-header-text p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ── KPI SUMMARY CARDS ───────────────────── */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .kpi-card.paid::before {
+            background: var(--success);
+        }
+
+        .kpi-card.pending::before {
+            background: #f59e0b;
+        }
+
+        .kpi-card.deducible::before {
+            background: var(--primary-orange);
+        }
+
+        .kpi-card.total::before {
+            background: var(--black);
+        }
+
+        .kpi-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .kpi-value {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--black);
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+
+        .kpi-sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* ── FILTER BAR ──────────────────────────── */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 24px;
+            margin-bottom: 20px;
+        }
+
+        .filter-bar label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .filter-bar input,
+        .filter-bar select {
+            padding: 9px 14px;
+            background: var(--bg-body);
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-bar input:focus,
+        .filter-bar select:focus {
+            border-color: var(--primary-orange);
+        }
+
+        .filter-bar .spacer {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 9px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: var(--primary-orange);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-orange-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-body);
+        }
+
+        .btn-export {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .btn-export:hover {
+            background: #333;
+        }
+
+        /* ── TABLE ───────────────────────────────── */
+        .table-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .table-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-card-header h2 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        .table-card-header span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 12px 20px;
+            background: #fafafa;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 16px 20px;
+            font-size: 0.88rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        td strong {
+            color: var(--black);
+            font-weight: 600;
+        }
+
+        /* ── STATUS BADGES ───────────────────────── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 11px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .badge-paid {
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .badge-paid .badge-dot {
+            background: var(--success);
+        }
+
+        .badge-pending {
+            background: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        .badge-pending .badge-dot {
+            background: #f59e0b;
+        }
+
+        .badge-partial {
+            background: var(--info-bg);
+            color: var(--info-text);
+        }
+
+        .badge-partial .badge-dot {
+            background: #3b82f6;
+        }
+
+        .badge-cancelled {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+
+        .badge-cancelled .badge-dot {
+            background: #ef4444;
+        }
+
+        /* ── PAYMENT TYPE CHIP ───────────────────── */
+        .type-chip {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: var(--bg-body);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .amount-positive {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .amount-negative {
+            font-weight: 700;
+            color: var(--primary-orange);
+        }
+
+        /* ── RECEIPT BUTTON ──────────────────────── */
+        .btn-receipt {
+            font-size: 0.78rem;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1.5px solid var(--border-color);
+            background: transparent;
+            color: var(--text-main);
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-receipt:hover {
+            border-color: var(--primary-orange);
+            color: var(--primary-orange);
+        }
+
+        /* ── TOTALS FOOTER ───────────────────────── */
+        .table-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 40px;
+            padding: 20px 24px;
+            background: #fafafa;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .total-item {
+            text-align: right;
+        }
+
+        .total-item .t-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .total-item .t-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--black);
+            letter-spacing: -0.02em;
+        }
+
+        .total-item .t-value.orange {
+            color: var(--primary-orange);
+        }
+
+        .total-item .t-value.green {
+            color: var(--success);
+        }
+
+        /* ── NOTICE ──────────────────────────────── */
+        .notice {
+            background: rgba(255, 107, 0, 0.07);
+            border: 1px solid rgba(255, 107, 0, 0.2);
+            border-left: 4px solid var(--primary-orange);
+            border-radius: 8px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+        <header class="topbar">
+        <div class="topbar-left">
+            <a href="dash_asegurado.html" class="topbar-logo">
+                <h1>Seguros<span>Pro</span></h1>
+            </a>
+            <nav class="topbar-nav">
+                <a href="dash_asegurado.html">Mi Unidad</a>
+                <a href="seguimiento_siniestro.html">Seguimiento</a>
+                <a href="consulta_siniestros.html">Historial de Pagos</a>
+                <a href="detalle_siniestro.html">Soporte / Contacto</a>
+            </nav>
+        </div>
+        <div class="topbar-right">
+            <span class="badge-role">Asegurado</span>
+            <div class="user-badge">
+                <div class="user-info">
+                    <strong>Roberto D.</strong>
+                    <small>Póliza Activa</small>
+                </div>
+                <div class="avatar">RD</div>
+            </div>
+            <a href="login.html" class="btn-logout" onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
+        </div>
+    </header>
+
+    <div class="page-content">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-header-text">
+                <h1>💳 Historial de Pagos</h1>
+                <p>Póliza <strong>POL-884920</strong> · Roberto Díaz · GNP Seguros</p>
+            </div>
+            <button class="btn btn-export" onclick="alert('Descargando estado de cuenta en PDF...')">
+                📄 Exportar Estado de Cuenta
+            </button>
+        </div>
+
+        <!-- KPI Summary -->
+        <div class="summary-grid">
+            <div class="kpi-card paid">
+                <div class="kpi-label">Total Pagado</div>
+                <div class="kpi-value">$12,500</div>
+                <div class="kpi-sub">Deducibles e indemnizaciones</div>
+            </div>
+            <div class="kpi-card pending">
+                <div class="kpi-label">Pendiente de Pago</div>
+                <div class="kpi-value">$3,200</div>
+                <div class="kpi-sub">1 movimiento pendiente</div>
+            </div>
+            <div class="kpi-card deducible">
+                <div class="kpi-label">Deducible Acumulado</div>
+                <div class="kpi-value">$5,000</div>
+                <div class="kpi-sub">2 eventos en el año</div>
+            </div>
+            <div class="kpi-card total">
+                <div class="kpi-label">Siniestros Registrados</div>
+                <div class="kpi-value">3</div>
+                <div class="kpi-sub">En el periodo seleccionado</div>
+            </div>
+        </div>
+
+        <!-- Notice -->
+        <div class="notice">
+            <strong>ℹ️ Información:</strong> Este historial refleja exclusivamente los movimientos relacionados con tu
+            póliza activa.
+            Para aclaraciones o disputas, utiliza la sección <strong>Soporte / Contacto</strong>.
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <label>Período</label>
+            <input type="date" id="fecha_inicio">
+            <input type="date" id="fecha_fin">
+
+            <label>Tipo</label>
+            <select id="tipo_movimiento">
+                <option value="">Todos</option>
+                <option value="deducible">Pago de Deducible</option>
+                <option value="indemnizacion">Indemnización</option>
+                <option value="reparacion">Pago a Taller</option>
+                <option value="reembolso">Reembolso</option>
+            </select>
+
+            <label>Estado</label>
+            <select id="estado_filtro">
+                <option value="">Todos</option>
+                <option value="pagado">Pagado</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="parcial">Parcial</option>
+            </select>
+
+            <div class="spacer"></div>
+            <button class="btn btn-outline" onclick="limpiarFiltros()">Limpiar</button>
+            <button class="btn btn-primary" id="btnFiltrar" onclick="filtrar()">🔍 Filtrar</button>
+        </div>
+
+        <!-- Payments Table -->
+        <div class="table-card">
+            <div class="table-card-header">
+                <h2>📋 Movimientos de Póliza</h2>
+                <span>Mostrando 4 registros</span>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Folio / Siniestro</th>
+                            <th>Fecha</th>
+                            <th>Tipo de Movimiento</th>
+                            <th>Descripción</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Comprobante</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>#SIN-10103</strong><br>
+                                <small style="color:var(--text-muted)">Colisión frontal</small>
+                            </td>
+                            <td>26 Feb, 2026</td>
+                            <td><span class="type-chip">Pago de Deducible</span></td>
+                            <td>Deducible automóvil — Póliza activa</td>
+                            <td class="amount-negative">$3,200.00 MXN</td>
+                            <td><span class="badge badge-pending"><span class="badge-dot"></span> Pendiente</span></td>
+                            <td><button class="btn-receipt" onclick="alert('Generando comprobante...')">📄 Ver</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <strong>#SIN-10099</strong><br>
+                                <small style="color:var(--text-muted)">Robo parcial</small>
+                            </td>
+                            <td>15 Feb, 2026</td>
+                            <td><span class="type-chip">Pago de Deducible</span></td>
+                            <td>Deducible robo y accesorios</td>
+                            <td class="amount-negative">$1,800.00 MXN</td>
+                            <td><span class="badge badge-paid"><span class="badge-dot"></span> Pagado</span></td>
+                            <td><button class="btn-receipt" onclick="alert('Abriendo CFDI 10099...')">📄 CFDI</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <strong>#SIN-10082</strong><br>
+                                <small style="color:var(--text-muted)">Pérdida total</small>
+                            </td>
+                            <td>10 Ene, 2026</td>
+                            <td><span class="type-chip"
+                                    style="background:#fff7ed; border-color:#fed7aa; color:#c2410c;">Indemnización</span>
+                            </td>
+                            <td>Indemnización pérdida total — valor comercial</td>
+                            <td class="amount-positive">$124,500.00 MXN</td>
+                            <td><span class="badge badge-paid"><span class="badge-dot"></span> Pagado</span></td>
+                            <td><button class="btn-receipt" onclick="alert('Abriendo CFDI 10082...')">📄 CFDI</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <strong>#SIN-10071</strong><br>
+                                <small style="color:var(--text-muted)">Daños a terceros</small>
+                            </td>
+                            <td>08 Nov, 2025</td>
+                            <td><span class="type-chip"
+                                    style="background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8;">Pago a
+                                    Taller</span></td>
+                            <td>Pago a Taller Automotriz Norte S.A. — reparación concluida</td>
+                            <td class="amount-positive">$7,500.00 MXN</td>
+                            <td><span class="badge badge-paid"><span class="badge-dot"></span> Pagado</span></td>
+                            <td><button class="btn-receipt" onclick="alert('Abriendo CFDI 10071...')">📄 CFDI</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <div class="total-item">
+                    <div class="t-label">Deducibles Pagados</div>
+                    <div class="t-value orange">$5,000.00 MXN</div>
+                </div>
+                <div class="total-item">
+                    <div class="t-label">Total Recibido</div>
+                    <div class="t-value green">$132,000.00 MXN</div>
+                </div>
+                <div class="total-item">
+                    <div class="t-label">Pendiente</div>
+                    <div class="t-value">$3,200.00 MXN</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function filtrar() {
+            const btn = document.getElementById('btnFiltrar');
+            btn.textContent = 'Filtrando...';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.innerHTML = '🔍 Filtrar';
+                btn.disabled = false;
+            }, 700);
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('fecha_inicio').value = '';
+            document.getElementById('fecha_fin').value = '';
+            document.getElementById('tipo_movimiento').value = '';
+            document.getElementById('estado_filtro').value = '';
+        }
+    </script>
+
+</body>
+
+</html>

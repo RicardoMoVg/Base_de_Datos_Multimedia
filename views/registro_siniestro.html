@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Siniestro | SegurosPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- DESIGN SYSTEM --- */
+        :root {
+            --primary-orange: #ff6b00;
+            --primary-orange-hover: #e65c00;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --bg-body: #f4f4f5;
+            --border-color: #e4e4e7;
+            --text-main: #27272a;
+            --text-muted: #71717a;
+
+            /* Semántica */
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --success: #10b981;
+            --info: #3b82f6;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ——— TOPBAR ——— */
+        .topbar {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 0 32px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .topbar-left,
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .topbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            margin-right: 16px;
+        }
+
+        .topbar-logo h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--white);
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+
+        .topbar-logo h1 span {
+            color: var(--primary-orange);
+        }
+
+        .topbar-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .topbar-nav a {
+            color: #a1a1aa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .topbar-nav a:hover {
+            color: var(--white);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .topbar-nav a.active {
+            color: var(--primary-orange);
+            background-color: rgba(255, 107, 0, 0.1);
+            font-weight: 600;
+        }
+
+        .badge-role {
+            background-color: var(--primary-orange);
+            color: var(--white);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 1px solid #333;
+            padding-left: 24px;
+        }
+
+        .user-info {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info strong {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .user-info small {
+            font-size: 0.75rem;
+            color: #a1a1aa;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: var(--white);
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Botones */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-orange);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-orange-hover);
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-body);
+            border-color: #d4d4d8;
+        }
+
+        /* ——— MAIN CONTENT ——— */
+        .main-content {
+            padding: 40px 32px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-orange);
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--black);
+            letter-spacing: -0.02em;
+        }
+
+        .notice-box {
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-left: 4px solid var(--info);
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+        }
+
+        .notice-box p {
+            font-size: 0.95rem;
+            color: var(--info);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .notice-box strong {
+            color: #1e3a8a;
+        }
+
+        /* Panel Formulario */
+        .panel {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .section-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-header h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 8px;
+        }
+
+        select,
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            background: #fafafa;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        select:focus,
+        input:focus,
+        textarea:focus {
+            background: var(--white);
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+        }
+
+        /* --- DRAG & DROP UPLOADER COMPONENT --- */
+        .uploader-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            background-color: #f8fafc;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            margin-top: 8px;
+        }
+
+        .uploader-area:hover,
+        .uploader-area.dragover {
+            border-color: var(--primary-orange);
+            background-color: #fff7ed;
+        }
+
+        .uploader-area.dragover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(255, 107, 0, 0.1);
+        }
+
+        .uploader-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .uploader-area.dragover .uploader-icon {
+            transform: translateY(-10px);
+        }
+
+        .uploader-text h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 8px;
+        }
+
+        .uploader-text p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .uploader-text span {
+            color: var(--primary-orange);
+            font-weight: 600;
+        }
+
+        #fileInput {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Thumbnails Grid */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: var(--white);
+            aspect-ratio: 1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .preview-item .file-generic {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            font-size: 24px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .file-generic span {
+            font-size: 0.65rem;
+            margin-top: 8px;
+            word-break: break-all;
+            font-weight: 600;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+
+        .remove-btn:hover {
+            background: var(--danger);
+        }
+    </style>
+    <link rel="stylesheet" href="topbar_global.css">
+</head>
+
+<body>
+
+                <header class="topbar">
+        <div class="topbar-left">
+            <a href="dash_ajustador.html" class="topbar-logo">
+                <h1>Seguros<span>Pro</span></h1>
+            </a>
+            <nav class="topbar-nav">
+                <a href="dash_ajustador.html">Inicio</a>
+                <a class="active" href="registro_siniestro.html">Registrar Siniestro</a>
+                <a href="consulta_siniestros.html">Mis Registros</a>
+                <a href="buscar_siniestros.html">Buscador</a>
+                <a href="detalle_siniestro.html">Mensajes / Dudas</a>
+            </nav>
+        </div>
+        <div class="topbar-right">
+            <span class="badge-role">Ajustador</span>
+            <div class="user-badge">
+                <div class="user-info">
+                    <strong>Carlos A.</strong>
+                    <small>Región Norte</small>
+                </div>
+                <div class="avatar">CA</div>
+            </div>
+            <a href="login.html" class="btn-logout" onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <a href="dash_ajustador.html" class="back-link">
+            <span>←</span> Volver al Dashboard
+        </a>
+
+        <div class="page-header">
+            <h2>Registro de Nuevo Siniestro</h2>
+        </div>
+
+        <div class="notice-box">
+            <p><strong>Apertura de Expediente:</strong> Asegúrate de recolectar suficiente evidencia inicial. Podrás
+                complementar el expediente multimedia posteriormente desde la sección de Expedientes.</p>
+        </div>
+
+        <form id="registroSiniestroForm">
+            <!-- Sección: Datos de la Compañía -->
+            <div class="panel">
+                <div class="section-header">
+                    <h3>🏢 Datos de la Compañía</h3>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="nombreAseguradora">Nombre de la Aseguradora *</label>
+                        <input type="text" id="nombreAseguradora" placeholder="Ej. SegurosPro S.A. de C.V." required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Datos del Cliente -->
+            <div class="panel">
+                <div class="section-header">
+                    <h3>👤 Datos del Cliente</h3>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nombreCliente">Nombre Completo del Asegurado *</label>
+                        <input type="text" id="nombreCliente" placeholder="Nombre completo del titular" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="noPoliza">Número de Póliza *</label>
+                        <input type="text" id="noPoliza" placeholder="Ej. POL-123456" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Datos de la Unidad -->
+            <div class="panel">
+                <div class="section-header">
+                    <h3>🚗 Datos de la Unidad</h3>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="marcaUnidad">Marca *</label>
+                        <input type="text" id="marcaUnidad" placeholder="Ej. Toyota, Nissan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modeloUnidad">Modelo y Año *</label>
+                        <input type="text" id="modeloUnidad" placeholder="Ej. Corolla 2022" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="placasUnidad">Placas *</label>
+                        <input type="text" id="placasUnidad" placeholder="Ej. ABC-123-D" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="serieUnidad">Número de Serie (VIN) o Identificador *</label>
+                        <input type="text" id="serieUnidad" placeholder="Ej. 17 caracteres alfanuméricos" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Detalles del Accidente e Involucrados -->
+            <div class="panel">
+                <div class="section-header">
+                    <h3>📍 Detalles del Accidente</h3>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fechaIncidente">Fecha del Incidente *</label>
+                        <input type="date" id="fechaIncidente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="horaIncidente">Hora Aproximada *</label>
+                        <!-- Usamos type text o time para la hora -->
+                        <input type="time" id="horaIncidente" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="lugarIncidente">Ubicación Exacta *</label>
+                        <input type="text" id="lugarIncidente"
+                            placeholder="Calle, Colonia, Avenida, Referencias específicas..." required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="involucrados">Terceros Involucrados (Opcional)</label>
+                        <textarea id="involucrados" rows="2"
+                            placeholder="Describe si hubo otras unidades afectadas, peatones, o daños a propiedad pública/privada..."></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="descripcion">Descripción de los Hechos (Relato Detallado) *</label>
+                        <textarea id="descripcion" rows="4"
+                            placeholder="Relato exhaustivo y detallado del asegurado sobre cómo sucedió el accidente."
+                            required></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Multimedia -->
+            <div class="panel">
+                <div class="section-header">
+                    <h3>📷 Sección Multimedia (Evidencia)</h3>
+                </div>
+
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+                    Sube múltiples fotografías, videos y documentos de la escena.
+                </p>
+
+                <!-- Área Dropzone -->
+                <div class="uploader-area" id="dropzone">
+                    <input type="file" id="fileInput" multiple
+                        accept="image/*, video/mp4, video/quicktime, application/pdf">
+                    <div class="uploader-icon">📥</div>
+                    <div class="uploader-text">
+                        <h4>Arrastra tus fotos o videos aquí</h4>
+                        <p>O <span>haz clic para explorar</span> tu equipo.<br>Máximo 20MB por archivo. Formatos
+                            permitidos: JPG, PNG, MP4, MOV, PDF.</p>
+                    </div>
+                </div>
+
+                <!-- Previsualizador de grilla -->
+                <div class="preview-grid" id="previewContainer">
+                    <!-- Las miniaturas se inyectarán aquí con JS -->
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 16px;">
+                <button type="button" class="btn btn-outline"
+                    onclick="window.location.href='dash_ajustador.html'">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btnSubmit">Guardar Expediente Completo</button>
+            </div>
+        </form>
+
+    </main>
+
+    <script>
+        // --- LÓGICA DE UPLOAD DRAG & DROP MULTIMEDIA ---
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const form = document.getElementById('registroSiniestroForm');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        let selectedFiles = []; // Almacena los archivos seleccionados para envío
+
+        // Eventos visuales drag & drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+        });
+
+        // Manejar envío al soltar archivos
+        dropzone.addEventListener('drop', handleDrop, false);
+
+        // Manejar el cambio cuando oprimen el input nativo invisible
+        fileInput.addEventListener('change', handleFilesSelected);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFilesSelected(e) {
+            handleFiles(e.target.files);
+        }
+
+        function handleFiles(files) {
+            files = [...files];
+            files.forEach(file => {
+                // Validación tamaño 20MB max para permitir videos cortos
+                if (file.size > 20 * 1024 * 1024) {
+                    alert('El archivo ' + file.name + ' supera el límite de 20MB permitidos para videos/imágenes.');
+                    return;
+                }
+
+                // Evitar duplicados por nombre
+                if (selectedFiles.find(f => f.name === file.name)) {
+                    return;
+                }
+
+                selectedFiles.push(file);
+                previewFile(file);
+            });
+
+            // Reset input so you can select the same file again if removed
+            fileInput.value = "";
+        }
+
+        function previewFile(file) {
+            const item = document.createElement('div');
+            item.className = 'preview-item';
+
+            // Botón de eliminar
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.innerHTML = '✕';
+            removeBtn.title = "Eliminar de la lista";
+            removeBtn.onclick = function (e) {
+                e.preventDefault();
+                // Eliminar del array
+                selectedFiles = selectedFiles.filter(f => f.name !== file.name);
+                // Eliminar del DOM
+                item.remove();
+            };
+            item.appendChild(removeBtn);
+
+            // Mostrar previsualización dependiendo del tipo
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = function () {
+                    const img = document.createElement('img');
+                    img.src = reader.result;
+                    item.appendChild(img);
+                }
+            } else if (file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.controls = true;
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.objectFit = 'cover';
+                video.style.background = '#000'; // Black background for videos
+                item.appendChild(video);
+            } else {
+                // Si es un PDF u otro archivo genérico
+                const iconBox = document.createElement('div');
+                iconBox.className = 'file-generic';
+                // Pick a generic icon or PDF icon based on type
+                const icon = file.type === 'application/pdf' ? '📑' : '📄';
+                iconBox.innerHTML = `${icon} <span>${file.name}</span>`;
+                item.appendChild(iconBox);
+            }
+
+            previewContainer.appendChild(item);
+        }
+
+        // --- SUBMIT DEL FORMULARIO ---
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            btnSubmit.innerHTML = '<span class="spinner" style="display:inline-block; width:16px; height:16px; border:2px solid #fff; border-bottom-color:transparent; border-radius:50%; animation: spin 1s linear infinite; margin-right:8px;"></span> Guardando...';
+            btnSubmit.disabled = true;
+
+            // Simulación de envío a SQL (Próxima etapa podríamos conectarlo real a multer)
+            setTimeout(() => {
+                alert(`¡Siniestro generado con éxito!\nSe cargaron ${selectedFiles.length} archivos multimedia al expediente.`);
+                window.location.href = 'dash_ajustador.html';
+            }, 1500);
+        });
+
+        // Estilos para la minúscula animación del botón (in-line for ease)
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes spin { 100% { transform: rotate(360deg); } }`;
+        document.head.appendChild(style);
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Reparaciones | SegurosPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="topbar_global.css">
+    <style>
+        :root {
+            --primary-orange: #ff6b00;
+            --primary-orange-hover: #e65c00;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --bg-body: #f4f4f5;
+            --border-color: #e4e4e7;
+            --text-main: #27272a;
+            --text-muted: #71717a;
+            --info: #3b82f6;
+            --info-bg: #eff6ff;
+            --warning: #f59e0b;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content {
+            max-width: 1200px;
+            margin: 36px auto;
+            padding: 0 24px;
+            width: 100%;
+        }
+
+        /* ── HEADER DE EXPEDIENTE ─────────────────────── */
+        .expediente-header {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            margin-bottom: 24px;
+        }
+
+        .eh-title h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--black);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .eh-title p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        /* ── GRID PRINCIPAL ──────────────────────────── */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 900px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--black);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── FORM GROUPS ─────────────────────────────── */
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary-orange);
+            background: #fffafa;
+        }
+
+        .inline-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .btn-update {
+            width: 100%;
+            padding: 14px;
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-update:hover {
+            background: #333;
+        }
+
+        .btn-update:active {
+            transform: scale(0.98);
+        }
+
+        /* ── UPLOADER ───────────────────────────────── */
+        .uploader-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 32px 20px;
+            text-align: center;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .uploader-area:hover,
+        .uploader-area.dragover {
+            border-color: var(--primary-orange);
+            background: rgba(255, 107, 0, 0.03);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            background: var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ── MESSAGING ───────────────────────────────── */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: #fafafa;
+            height: 480px;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .msg-bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .msg-bubble .sender {
+            font-size: 0.7rem;
+            font-weight: 700;
+            opacity: 0.7;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .msg-bubble .time {
+            font-size: 0.65rem;
+            opacity: 0.6;
+            position: absolute;
+            bottom: -18px;
+        }
+
+        .msg-client {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-client .time {
+            left: 4px;
+        }
+
+        .msg-internal {
+            background: var(--primary-orange);
+            color: var(--white);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-internal .time {
+            right: 4px;
+        }
+
+        .chat-input {
+            padding: 16px;
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input input:focus {
+            border-color: var(--primary-orange);
+        }
+
+        .btn-send {
+            width: 44px;
+            height: 44px;
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-send:hover {
+            background: var(--primary-orange);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="topbar-left">
+            <a href="dash_supervisor.html" class="topbar-logo">
+                <h1>Seguros<span>Pro</span></h1>
+            </a>
+            <nav class="topbar-nav">
+                <a href="dash_supervisor.html">Panel de Control</a>
+                <a class="active" href="vista_supervisor.html">Autorizaciones</a>
+                <a href="historial_global.html">Historial Global</a>
+                <a href="busqueda_avanzada.html">Búsqueda Avanzada</a>
+                <a href="gestion_reparaciones.html">Gestión Reparaciones</a>
+            </nav>
+        </div>
+        <div class="topbar-right">
+            <span class="badge-role">Supervisor</span>
+            <div class="user-badge">
+                <div class="user-info">
+                    <strong>Laura S.</strong>
+                    <small>Autorización Múltiple</small>
+                </div>
+                <div class="avatar">LS</div>
+            </div>
+            <a href="login.html" class="btn-logout" onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
+        </div>
+    </header>
+
+    <div class="page-content">
+
+        <!-- Header Expediente -->
+        <div class="expediente-header">
+            <div class="eh-title">
+                <h1>Folio #SIN-2388 <span class="pill">Taller: Automotriz Los Arcos</span></h1>
+                <p>👤 <strong>Asegurado:</strong> Laura Méndez | 🚘 Ford Ranger 2021 (YZ-987-X)</p>
+            </div>
+            <div class="eh-actions">
+                <button class="btn-update"
+                    style="padding: 10px 20px; width:auto; border-radius:30px; background:var(--white); color:var(--text-main); border:1.5px solid var(--border-color);">
+                    🔎 Ver Dictamen Original
+                </button>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+
+            <!-- Columna Izquierda: Logística y Evidencia -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+
+                <!-- Actualización de Compromisos -->
+                <div class="panel-card">
+                    <h2 class="panel-title">⏱️ Actualización de Compromisos</h2>
+
+                    <div class="inline-grid">
+                        <div class="form-group">
+                            <label>Estado de Reparación</label>
+                            <select id="estadoRep">
+                                <option value="ingreso">Ingresado a Taller</option>
+                                <option value="hojalateria">Hojalatería</option>
+                                <option value="pintura">Pintura</option>
+                                <option value="armado">Armado / Detallado</option>
+                                <option value="listo">Listo para Entrega</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha Compromiso de Entrega</label>
+                            <input type="date" id="fechaCompromiso" value="2026-03-20">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Observaciones Técnicas (Visibles al Cliente)</label>
+                        <input type="text" placeholder="Ej. Retraso por escasez de refacciones originales...">
+                    </div>
+
+                    <button class="btn-update" onclick="actualizarEstatus(this)">💾 Guardar Actualización</button>
+                </div>
+
+                <!-- Carga de Evidencia Final -->
+                <div class="panel-card" style="flex:1;">
+                    <h2 class="panel-title">📸 Evidencia Fotográfica (Taller / Supervisor)</h2>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:-10px;">
+                        Sube fotos del progreso o la reparación concluida. Esta evidencia respaldará el pago final al
+                        taller.
+                    </p>
+
+                    <div class="uploader-area" id="dropZone">
+                        <div style="font-size:2rem; margin-bottom:12px;">📤</div>
+                        <h3 style="color:var(--black); font-size:1rem; margin-bottom:4px;">Arrastra las fotos aquí</h3>
+                        <p style="font-size:0.85rem; color:var(--text-muted);">o haz clic para explorar tus archivos</p>
+                        <input type="file" id="fileInput" multiple accept="image/*" style="display:none;">
+                    </div>
+
+                    <div class="gallery-grid" id="previewGallery">
+                        <!-- Preview Images Go Here -->
+                        <div class="gallery-item" title="Evidencia anterior (Pintura)">
+                            <img src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=200"
+                                alt="Avance 1">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Columna Derecha: Centro de Mensajería -->
+            <div class="panel-card" style="padding: 0; overflow: hidden;">
+                <h2 class="panel-title" style="padding: 24px 24px 16px; margin:0;">💬 Centro de Mensajería
+                    (Cliente-Taller)</h2>
+
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatArea">
+
+                        <div class="msg-bubble msg-internal">
+                            <span class="sender">Laura S. (Supervisora)</span>
+                            El vehículo ha sido ingresado correctamente al taller "Automotriz Los Arcos". Comenzamos el
+                            desarme.
+                            <span class="time">Ayer, 10:30 AM</span>
+                        </div>
+
+                        <div class="msg-bubble msg-client">
+                            <span class="sender">Laura Méndez (Asegurada)</span>
+                            ¡Gracias! Quería saber si la reparación del faro izquierdo será con pieza original.
+                            <span class="time">Ayer, 11:15 AM</span>
+                        </div>
+
+                        <div class="msg-bubble msg-internal">
+                            <span class="sender">Laura S. (Supervisora)</span>
+                            Hola Laura, confirmo que todas las refacciones solicitadas, incluyendo el faro, son piezas
+                            OEM originales de agencia.
+                            <span class="time">Hoy, 9:00 AM</span>
+                        </div>
+
+                    </div>
+
+                    <form class="chat-input" onsubmit="event.preventDefault(); window.enviarMensaje();">
+                        <input type="text" id="mensajeInput" placeholder="Escribe un mensaje al cliente..."
+                            autocomplete="off">
+                        <button type="submit" class="btn-send" title="Enviar Mensaje">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Actualizar Estatus 
+        window.actualizarEstatus = function (btn) {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⌛ Guardando...';
+            btn.style.opacity = '0.7';
+
+            setTimeout(() => {
+                btn.innerHTML = '✅ Actualizado Correctamente';
+                btn.style.background = 'var(--success)';
+                btn.style.opacity = '1';
+
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'var(--black)';
+                }, 3000);
+            }, 800);
+        };
+
+        // Enviar Mensaje Chat
+        window.enviarMensaje = function () {
+            const input = document.getElementById('mensajeInput');
+            const chat = document.getElementById('chatArea');
+            const texto = input.value.trim();
+
+            if (!texto) return;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg-bubble msg-internal';
+            msgDiv.innerHTML = `
+                <span class="sender">Laura S. (Supervisora)</span>
+                ${texto}
+                <span class="time">Hoy, ${timeStr}</span>
+            `;
+
+            chat.appendChild(msgDiv);
+            input.value = '';
+
+            // Scroll to bottom
+            chat.scrollTop = chat.scrollHeight;
+        };
+
+        // Drag & Drop Uploader Simulación
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const gallery = document.getElementById('previewGallery');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const div = document.createElement('div');
+                        div.className = 'gallery-item';
+                        div.innerHTML = `<img src="${e.target.result}" alt="Evidencia">
+                                       <div style="position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.5); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:10px; cursor:pointer;" onclick="this.parentElement.remove()">✕</div>`;
+                        gallery.appendChild(div);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

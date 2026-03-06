@@ -7,17 +7,19 @@
     <title>Iniciar Sesión | SegurosPro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Reutilizamos el Design System (Variables) para mantener consistencia */
         :root {
             --primary-orange: #ff6b00;
             --primary-orange-hover: #e65c00;
             --black: #1a1a1a;
             --white: #ffffff;
-            --bg-body: #f4f4f5;
+            --bg-body: #f8f9fa;
             --border-color: #e4e4e7;
             --text-main: #27272a;
             --text-muted: #71717a;
             --input-bg: #fafafa;
+            --error-bg: #fff1f2;
+            --error-border: #fda4af;
+            --error-text: #be123c;
         }
 
         *,
@@ -34,36 +36,61 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Fondo claro con un sutil patrón o gradiente radial para darle profundidad sin ser ruidoso */
-            background: radial-gradient(circle at top right, #ffffff, var(--bg-body));
+            background-color: var(--bg-body);
             color: var(--text-main);
             position: relative;
             overflow: hidden;
         }
 
-        /* Elemento decorativo de fondo para darle un toque creativo y corporativo */
-        body::before {
-            content: '';
+        /* ── Elementos Decorativos Animados (Blobs) ── */
+        .blob {
             position: absolute;
-            top: -20vh;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+            animation: float 12s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.5;
+        }
+
+        .blob-1 {
+            top: -15vh;
             left: -10vw;
             width: 50vw;
             height: 50vw;
-            background: linear-gradient(135deg, rgba(255, 107, 0, 0.05), transparent);
-            border-radius: 50%;
-            z-index: 0;
+            background: rgba(255, 107, 0, 0.15);
         }
 
+        .blob-2 {
+            bottom: -20vh;
+            right: -10vw;
+            width: 60vw;
+            height: 60vw;
+            background: rgba(255, 170, 0, 0.08);
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(3vw, 5vh) scale(1.05);
+            }
+        }
+
+        /* ── Tarjeta Principal (Glassmorphism) ── */
         .card {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
             padding: 48px 40px;
             width: 100%;
             max-width: 420px;
-            /* Sombra suave y profesional en lugar de una sombra pesada */
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
-            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(228, 228, 231, 0.5);
+            animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             z-index: 1;
         }
@@ -71,7 +98,7 @@
         @keyframes fadeUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
 
             to {
@@ -82,14 +109,14 @@
 
         .logo {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 36px;
         }
 
         .logo h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--black);
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
         }
 
         .logo h1 span {
@@ -97,10 +124,52 @@
         }
 
         .logo p {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
-            margin-top: 8px;
-            font-weight: 400;
+            margin-top: 6px;
+        }
+
+        /* ── Banner de error ── */
+        .error-banner {
+            display: none;
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 0.875rem;
+            color: var(--error-text);
+            font-weight: 500;
+            margin-bottom: 24px;
+            animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+            text-align: center;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-2px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(4px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-6px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(6px, 0, 0);
+            }
+        }
+
+        .error-banner.visible {
+            display: block;
         }
 
         .form-group {
@@ -110,7 +179,7 @@
         label {
             display: block;
             font-size: 0.8rem;
-            color: var(--black);
+            color: var(--text-main);
             margin-bottom: 8px;
             font-weight: 600;
             text-transform: uppercase;
@@ -122,11 +191,11 @@
             padding: 14px 16px;
             background: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             color: var(--text-main);
             font-size: 0.95rem;
             font-family: 'Inter', sans-serif;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             outline: none;
         }
 
@@ -137,18 +206,24 @@
         input:focus {
             background: var(--white);
             border-color: var(--primary-orange);
-            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+            transform: translateY(-1px);
         }
 
-        /* Enlace de olvidé contraseña */
+        input.input-error {
+            border-color: var(--error-border);
+            background: var(--error-bg);
+        }
+
         .forgot-password {
-            display: block;
+            display: inline-block;
+            width: 100%;
             text-align: right;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             text-decoration: none;
-            margin-top: -12px;
-            margin-bottom: 24px;
+            margin-top: -8px;
+            margin-bottom: 28px;
             font-weight: 500;
             transition: color 0.2s;
         }
@@ -159,32 +234,62 @@
 
         .btn-primary {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             background-color: var(--primary-orange);
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             color: var(--white);
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: all 0.3s ease;
             letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             background-color: var(--primary-orange-hover);
+            box-shadow: 0 6px 16px rgba(255, 107, 0, 0.3);
+            transform: translateY(-2px);
         }
 
-        .btn-primary:active {
+        .btn-primary:active:not(:disabled) {
             transform: scale(0.98);
+        }
+
+        .btn-primary:disabled {
+            background-color: #a1a1aa;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Spinner */
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .divider {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin: 28px 0;
-            color: var(--text-muted);
+            gap: 16px;
+            margin: 32px 0;
+            color: #a1a1aa;
             font-size: 0.85rem;
             font-weight: 500;
             text-transform: uppercase;
@@ -200,7 +305,7 @@
 
         .footer-links {
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
         }
 
@@ -215,16 +320,29 @@
             color: var(--primary-orange);
         }
     </style>
+    <link rel="stylesheet" href="topbar_global.css">
 </head>
 
 <body>
+    <header class="topbar">
+        <div class="topbar-left">
+            <a href="login.html" class="topbar-logo">
+                <h1>Seguros<span>Pro</span></h1>
+            </a>
+        </div>
+    </header>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
     <div class="card">
         <div class="logo">
             <h1>Seguros<span>Pro</span></h1>
             <p>Acceso al sistema de gestión</p>
         </div>
 
-        <form id="loginForm" action="consulta_siniestros.html" method="get">
+        <div id="errorBanner" class="error-banner" role="alert"></div>
+
+        <form id="loginForm" novalidate>
             <div class="form-group">
                 <label for="usuario">Usuario / Correo</label>
                 <input type="text" id="usuario" name="usuario" placeholder="ej. analista@segurospro.com" required
@@ -239,15 +357,111 @@
 
             <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
 
-            <button type="submit" class="btn-primary">Iniciar Sesión</button>
+            <button type="submit" class="btn-primary" id="btnLogin">
+                <span id="btnLoginText">Iniciar Sesión</span>
+                <span class="spinner" id="btnSpinner"></span>
+            </button>
         </form>
 
         <div class="divider">o</div>
 
         <div class="footer-links">
-            ¿Nuevo en el equipo? <a href="../views/registro.html">Crear cuenta</a>
+            ¿Nuevo en el equipo? <a href="registro.html">Crear cuenta</a>
         </div>
     </div>
+
+    <script>
+        // ── Helpers ──────────────────────────────────────────────────────────
+        const errorBanner = document.getElementById('errorBanner');
+        const btnLogin = document.getElementById('btnLogin');
+        const btnText = document.getElementById('btnLoginText');
+        const btnSpinner = document.getElementById('btnSpinner');
+
+        function mostrarError(msg) {
+            errorBanner.textContent = msg;
+            errorBanner.classList.add('visible');
+            ['usuario', 'password'].forEach(id => {
+                document.getElementById(id).classList.add('input-error');
+            });
+        }
+
+        function limpiarError() {
+            errorBanner.classList.remove('visible');
+            ['usuario', 'password'].forEach(id => {
+                document.getElementById(id).classList.remove('input-error');
+            });
+        }
+
+        function setLoading(on) {
+            btnLogin.disabled = on;
+            btnText.textContent = on ? 'Autenticando...' : 'Iniciar Sesión';
+            btnSpinner.style.display = on ? 'block' : 'none';
+        }
+
+        // ── Mapeo de dashboards por rol ───────────────────────────────────────
+        const REDIRECT = {
+            'Ajustador': 'dash_ajustador.html',
+            'Supervisor': 'dash_supervisor.html',
+            'Asegurado': 'dash_asegurado.html'
+        };
+
+        // ── Verificar si ya hay sesión activa ─────────────────────────────────
+        (function checkSession() {
+            const token = sessionStorage.getItem('sp_token');
+            const tipo = sessionStorage.getItem('sp_tipo');
+            if (token && REDIRECT[tipo]) {
+                location.href = REDIRECT[tipo];
+            }
+        })();
+
+        // ── Submit ────────────────────────────────────────────────────────────
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            limpiarError();
+
+            const usuario = document.getElementById('usuario').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!usuario || !password) {
+                mostrarError('Por favor completa todos los campos.');
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario, password })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    sessionStorage.setItem('sp_token', data.token);
+                    sessionStorage.setItem('sp_tipo', data.tipoUsuario);
+                    sessionStorage.setItem('sp_nombre', data.nombreCompleto);
+                    sessionStorage.setItem('sp_id', data.usuarioID);
+
+                    const destino = REDIRECT[data.tipoUsuario];
+                    if (destino) {
+                        location.href = destino;
+                    } else {
+                        mostrarError('Rol de sistema desconocido. Contacta al administrador.');
+                    }
+                } else {
+                    mostrarError(data.message || 'Credenciales inválidas.');
+                }
+
+            } catch (err) {
+                console.error('Error iniciando sesión:', err);
+                mostrarError('No se pudo conectar al servidor. Intenta de nuevo.');
+            } finally {
+                setLoading(false);
+            }
+        });
+    </script>
 </body>
 
 </html>

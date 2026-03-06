@@ -269,22 +269,77 @@
             background-color: var(--bg-body);
         }
     </style>
+    <link rel="stylesheet" href="topbar_global.css">
 </head>
 
 <body>
+
     <header class="topbar">
-        <h2>Seguros<span style="color: var(--primary-orange);">Pro</span></h2>
-        <nav class="topbar-nav">
-            <a href="dash_supervisor.html">Dashboard</a>
-            <a href="buscar_siniestros.html">Búsqueda</a>
-            <a href="consulta_siniestros.html" class="active">Consultas</a>
-            <a href="login.html">Salir</a>
-            <span class="badge">General</span>
-        </nav>
+        <div class="topbar-left">
+            <a href="dash_ajustador.html" class="topbar-logo">
+                <h1>Seguros<span>Pro</span></h1>
+            </a>
+            <nav class="topbar-nav">
+                <a class="active" href="dash_ajustador.html">Inicio</a>
+                <a href="registro_siniestro.html">Registrar Siniestro</a>
+                <a href="consulta_siniestros.html">Mis Registros</a>
+                <a href="buscar_siniestros.html">Buscador</a>
+                <a href="detalle_siniestro.html">Mensajes / Dudas</a>
+            </nav>
+        </div>
+        <div class="topbar-right">
+            <span class="badge-role">Ajustador</span>
+            <div class="user-badge">
+                <div class="user-info">
+                    <strong>Carlos A.</strong>
+                    <small>Región Norte</small>
+                </div>
+                <div class="avatar">CA</div>
+            </div>
+            <a href="login.html" class="btn-logout" onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
+        </div>
     </header>
 
     <main class="container">
         <h1 class="page-title">Consulta de Siniestros y Pagos</h1>
+
+        <style>
+            /* Badges for status in table */
+            .badge-status {
+                padding: 4px 10px;
+                border-radius: 12px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                white-space: nowrap;
+            }
+
+            .badge-pending {
+                background-color: #fef08a;
+                color: #854d0e;
+            }
+
+            .badge-repair {
+                background-color: #bfdbfe;
+                color: #1e3a8a;
+            }
+
+            .badge-total-loss {
+                background-color: #fecdd3;
+                color: #9f1239;
+            }
+
+            .badge-accepted {
+                background-color: #bbf7d0;
+                color: #166534;
+            }
+
+            .badge-rejected {
+                background-color: #e5e5e5;
+                color: #52525b;
+            }
+        </style>
 
         <section class="panel">
             <p class="panel-description">
@@ -292,61 +347,106 @@
                 búsquedas cruzadas por Asegurado, Ajustador o Supervisor.
             </p>
 
-            <form action="#">
+            <form action="#" id="formFiltros">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="fecha_inicio">Fecha Inicio</label>
-                        <input type="date" id="fecha_inicio" name="fecha_inicio">
+                        <label for="fecha_inicio">Fecha Inicio del Siniestro</label>
+                        <input type="date" id="fecha_inicio" name="fecha_inicio" required>
                     </div>
                     <div class="form-group">
-                        <label for="fecha_fin">Fecha Fin</label>
-                        <input type="date" id="fecha_fin" name="fecha_fin">
+                        <label for="fecha_fin">Fecha Fin del Siniestro</label>
+                        <input type="date" id="fecha_fin" name="fecha_fin" required>
                     </div>
-                    <button type="button" class="btn btn-primary">Filtrar Resultados</button>
+                    <button type="submit" class="btn btn-primary"
+                        style="height: 44px; display:flex; align-items:center;">Filtrar Siniestros</button>
                 </div>
             </form>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Folio</th>
-                        <th>Fecha</th>
-                        <th>Asegurado</th>
-                        <th>Ajustador</th>
-                        <th>Estado Actual</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>#SIN-101</strong></td>
-                        <td>10 Feb, 2026</td>
-                        <td>María García</td>
-                        <td>Carlos A.</td>
-                        <td>
-                            <span class="status-text">
-                                <span class="status-dot"></span> En revisión
-                            </span>
-                        </td>
-                        <td><a href="seguimiento_siniestro.html" class="btn btn-small">Ver Detalles</a></td>
-                    </tr>
-                    <tr>
-                        <td><strong>#SIN-102</strong></td>
-                        <td>15 Feb, 2026</td>
-                        <td>Roberto Díaz</td>
-                        <td>Ana L.</td>
-                        <td>
-                            <span class="status-text" style="color: var(--pure-black);">
-                                <span class="status-dot" style="background-color: var(--pure-black);"></span> Pérdida
-                                Total
-                            </span>
-                        </td>
-                        <td><a href="seguimiento_siniestro.html" class="btn btn-small">Ver Detalles</a></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Folio Siniestro</th>
+                            <th>Fecha</th>
+                            <th>Asegurado Titular</th>
+                            <th>Dictamen / Estatus</th>
+                            <th>Pagos / Deducible</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>#SIN-10103</strong></td>
+                            <td>26 Feb, 2026</td>
+                            <td>Roberto Díaz</td>
+                            <td>
+                                <span class="badge-status badge-pending">Evaluación Pendiente</span>
+                            </td>
+                            <td>
+                                <span style="color: var(--text-muted); font-size: 0.8rem;">Por determinar</span>
+                            </td>
+                            <td><a href="detalle_siniestro.html" class="btn btn-small">Ver Detalle y Multimedia</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#SIN-10102</strong></td>
+                            <td>24 Feb, 2026</td>
+                            <td>María García</td>
+                            <td>
+                                <span class="badge-status badge-repair">Reparación Autorizada</span>
+                            </td>
+                            <td>
+                                <strong>$0.00 MXN</strong><br>
+                                <small style="color: var(--text-muted)">Aceptado sin deducible</small>
+                            </td>
+                            <td><a href="detalle_siniestro.html" class="btn btn-small">Ver Detalle y Multimedia</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#SIN-10101</strong></td>
+                            <td>20 Feb, 2026</td>
+                            <td>Juan Pérez</td>
+                            <td>
+                                <span class="badge-status badge-total-loss">Pérdida Total</span>
+                            </td>
+                            <td>
+                                <strong style="color: var(--primary-orange)">$124,500.00 MXN</strong><br>
+                                <small style="color: var(--text-muted)">Indemnización Programada</small>
+                            </td>
+                            <td><a href="detalle_siniestro.html" class="btn btn-small">Ver Detalle y Multimedia</a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#SIN-10099</strong></td>
+                            <td>15 Feb, 2026</td>
+                            <td>Lucía Fernández</td>
+                            <td>
+                                <span class="badge-status badge-rejected">Rechazado (Improcedente)</span>
+                            </td>
+                            <td>
+                                <span style="color: var(--text-muted); font-size: 0.8rem;">No Aplica</span>
+                            </td>
+                            <td><a href="detalle_siniestro.html" class="btn btn-small">Ver Detalle y Multimedia</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
+
+    <script>
+        // UX interactivo simple
+        document.getElementById('formFiltros').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Buscando...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                // En un escenario real aquí recargaríamos los datos JSON en la tabla
+            }, 800);
+        });
+    </script>
 </body>
 
 </html>

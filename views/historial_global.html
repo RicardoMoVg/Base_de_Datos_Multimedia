@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial Global | SegurosPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="topbar_global.css">
+    <style>
+        :root {
+            --primary-orange: #ff6b00;
+            --primary-orange-hover: #e65c00;
+            --black: #1a1a1a;
+            --white: #ffffff;
+            --bg-body: #f4f4f5;
+            --border-color: #e4e4e7;
+            --text-main: #27272a;
+            --text-muted: #71717a;
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --info: #3b82f6;
+            --info-bg: #dbeafe;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── PAGE LAYOUT ─────────────────────────── */
+        .page-content {
+            max-width: 1200px;
+            margin: 36px auto;
+            padding: 0 24px;
+            width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--black);
+            letter-spacing: -0.02em;
+        }
+
+        .page-title p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* ── TOOLBAR / FILTERS ───────────────────── */
+        .toolbar {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 9px 12px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary-orange);
+            background: var(--white);
+        }
+
+        .toolbar .spacer {
+            flex: 1;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: var(--primary-orange);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-orange-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-body);
+        }
+
+        .btn-export {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .btn-export:hover {
+            background: #333;
+        }
+
+        .btn-icon-only {
+            padding: 9px;
+        }
+
+        /* ── TABLE ───────────────────────────────── */
+        .table-container {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            margin-bottom: 32px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #fafafa;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 16px 20px;
+            font-size: 0.88rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 107, 0, 0.02);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .s-id {
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        .s-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        /* Estatus Badges */
+        .badge.aceptado {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge.rechazado {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .badge.revision {
+            background: var(--warning-bg);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        /* Pagos Badges */
+        .badge.pago-deducible {
+            background: var(--info-bg);
+            color: var(--info);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .badge.pago-reparacion {
+            background: #f3e8ff;
+            color: #7e22ce;
+            border: 1px solid rgba(126, 34, 206, 0.2);
+        }
+
+        .badge.perdida-total {
+            background: #fce7f3;
+            color: #be185d;
+            border: 1px solid rgba(190, 24, 93, 0.2);
+        }
+
+        .badge.sin-pago {
+            background: var(--bg-body);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-ver {
+            font-size: 0.8rem;
+            padding: 6px 14px;
+            border-radius: 6px;
+            color: var(--black);
+            background: var(--white);
+            border: 1.5px solid var(--border-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-ver:hover {
+            border-color: var(--primary-orange);
+            color: var(--primary-orange);
+        }
+
+        /* ── PAGINATION ──────────────────────────── */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .page-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .page-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-page {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid var(--border-color);
+            background: var(--white);
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .btn-page.active {
+            border-color: var(--primary-orange);
+            background: var(--primary-orange);
+            color: var(--white);
+        }
+
+        .btn-page:not(.active):hover {
+            background: var(--bg-body);
+        }
+
+        .btn-page:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="topbar-left">
+            <a href="dash_supervisor.html" class="topbar-logo">
+                <h1>Seguros<span>Pro</span></h1>
+            </a>
+            <nav class="topbar-nav">
+                <a href="dash_supervisor.html">Panel de Control</a>
+                <a class="active" href="vista_supervisor.html">Autorizaciones</a>
+                <a href="historial_global.html">Historial Global</a>
+                <a href="busqueda_avanzada.html">Búsqueda Avanzada</a>
+                <a href="gestion_reparaciones.html">Gestión Reparaciones</a>
+            </nav>
+        </div>
+        <div class="topbar-right">
+            <span class="badge-role">Supervisor</span>
+            <div class="user-badge">
+                <div class="user-info">
+                    <strong>Laura S.</strong>
+                    <small>Autorización Múltiple</small>
+                </div>
+                <div class="avatar">LS</div>
+            </div>
+            <a href="login.html" class="btn-logout" onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
+        </div>
+    </header>
+
+    <div class="page-content">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h1>Historial Global 🗂️</h1>
+                <p>Auditoría completa de siniestros registrados y dictaminados en todo el sistema.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" title="Imprimir pantalla">🖨️</button>
+                <div style="display: flex; border-radius: 8px; overflow: hidden;">
+                    <button class="btn btn-export" style="border-radius: 8px 0 0 8px;"
+                        onclick="alert('Exportando a Excel...')">📊 Excel</button>
+                    <button class="btn btn-export" style="border-radius: 0 8px 8px 0; border-left: 1px solid #444;"
+                        onclick="alert('Exportando a PDF...')">📄 PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Toolbar -->
+        <div class="toolbar">
+            <div class="form-group">
+                <label>Desde</label>
+                <input type="date" id="dateStart" value="2026-01-01">
+            </div>
+            <div class="form-group">
+                <label>Hasta</label>
+                <input type="date" id="dateEnd">
+            </div>
+
+            <div class="form-group" style="min-width: 180px;">
+                <label>Compañía</label>
+                <select id="filterCompany">
+                    <option value="">Todas</option>
+                    <option value="gnp">GNP Seguros</option>
+                    <option value="axa">AXA</option>
+                    <option value="qualitas">Quálitas</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="min-width: 160px;">
+                <label>Dictamen</label>
+                <select id="filterDictamen">
+                    <option value="">Todos</option>
+                    <option value="revision">En Revisión</option>
+                    <option value="aceptado">Aceptado</option>
+                    <option value="rechazado">Rechazado</option>
+                </select>
+            </div>
+
+            <div class="spacer"></div>
+
+            <button class="btn btn-primary" onclick="filtrar()">🔍 Filtrar Registros</button>
+            <button class="btn btn-outline btn-icon-only" onclick="resetFiltros()" title="Limpiar Filtros">🔄</button>
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Folio / Fecha</th>
+                        <th>Asegurado</th>
+                        <th>Ajustador Asignado</th>
+                        <th>Dictamen</th>
+                        <th>Resolución Financiera</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="s-id">#SIN-2410</span>
+                            <span class="s-date">26/02/2026 14:30</span>
+                        </td>
+                        <td>
+                            <strong>Roberto Díaz</strong><br>
+                            <span style="font-size:0.8rem; color:var(--text-muted);">GNP Seguros</span>
+                        </td>
+                        <td>Carlos A.</td>
+                        <td><span class="badge aceptado">Aceptado</span></td>
+                        <td><span class="badge perdida-total">Pérdida Total</span></td>
+                        <td><a href="vista_supervisor.html?id=2410" class="btn-ver">👁️ Auditar</a></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <span class="s-id">#SIN-2408</span>
+                            <span class="s-date">15/02/2026 09:15</span>
+                        </td>
+                        <td>
+                            <strong>María Hernández</strong><br>
+                            <span style="font-size:0.8rem; color:var(--text-muted);">Quálitas</span>
+                        </td>
+                        <td>Ana L.</td>
+                        <td><span class="badge aceptado">Aceptado</span></td>
+                        <td><span class="badge pago-deducible">Pago de Deducible</span></td>
+                        <td><a href="vista_supervisor.html?id=2408" class="btn-ver">👁️ Auditar</a></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <span class="s-id">#SIN-2405</span>
+                            <span class="s-date">10/02/2026 18:45</span>
+                        </td>
+                        <td>
+                            <strong>Auto Transportes Sur</strong><br>
+                            <span style="font-size:0.8rem; color:var(--text-muted);">Zurich</span>
+                        </td>
+                        <td>Jorge M.</td>
+                        <td><span class="badge rechazado">Rechazado</span></td>
+                        <td><span class="badge sin-pago">Sin Pago</span></td>
+                        <td><a href="vista_supervisor.html?id=2405" class="btn-ver">👁️ Auditar</a></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <span class="s-id">#SIN-2401</span>
+                            <span class="s-date">02/02/2026 11:20</span>
+                        </td>
+                        <td>
+                            <strong>Empresa Logística AC</strong><br>
+                            <span style="font-size:0.8rem; color:var(--text-muted);">AXA</span>
+                        </td>
+                        <td>María P.</td>
+                        <td><span class="badge revision">En Revisión</span></td>
+                        <td><span class="badge sin-pago">Pendiente</span></td>
+                        <td><a href="vista_supervisor.html?id=2401" class="btn-ver">👁️ Auditar</a></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <span class="s-id">#SIN-2388</span>
+                            <span class="s-date">10/01/2026 10:00</span>
+                        </td>
+                        <td>
+                            <strong>Laura Méndez</strong><br>
+                            <span style="font-size:0.8rem; color:var(--text-muted);">GNP Seguros</span>
+                        </td>
+                        <td>Carlos A.</td>
+                        <td><span class="badge aceptado">Aceptado</span></td>
+                        <td><span class="badge pago-reparacion">Aplica Reparación</span></td>
+                        <td><a href="vista_supervisor.html?id=2388" class="btn-ver">👁️ Auditar</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <span class="page-info">Mostrando registros 1 - 5 de 142 totales</span>
+                <div class="page-controls">
+                    <button class="btn-page" disabled>‹</button>
+                    <button class="btn-page active">1</button>
+                    <button class="btn-page">2</button>
+                    <button class="btn-page">3</button>
+                    <span style="padding: 0 8px; color:var(--text-muted);">...</span>
+                    <button class="btn-page">29</button>
+                    <button class="btn-page">›</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Formatear campo "Hasta" con fecha de hoy
+        document.getElementById('dateEnd').valueAsDate = new Date();
+
+        function Main() { }
+        Main.prototype.filtrar = function () {
+            const btn = document.querySelector('.btn-primary');
+            btn.innerHTML = '⌛ Filtrando...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = '🔍 Filtrar Registros';
+                btn.disabled = false;
+            }, 600);
+        }
+
+        const app = new Main();
+        window.filtrar = app.filtrar.bind(app);
+
+        function resetFiltros() {
+            document.getElementById('dateStart').value = '2026-01-01';
+            document.getElementById('dateEnd').valueAsDate = new Date();
+            document.getElementById('filterCompany').value = '';
+            document.getElementById('filterDictamen').value = '';
+        }
+    </script>
+</body>
+
+</html>
