@@ -372,8 +372,8 @@
             </a>
             <nav class="topbar-nav">
                 <a href="dash_supervisor.html">Panel de Control</a>
-                <a class="active" href="vista_supervisor.html">Autorizaciones</a>
-                <a href="historial_global.html">Historial Global</a>
+                <a href="vista_supervisor.html">Autorizaciones</a>
+                <a class="active" href="historial_global.html">Historial Global</a>
                 <a href="busqueda_avanzada.html">Búsqueda Avanzada</a>
                 <a href="gestion_reparaciones.html">Gestión Reparaciones</a>
             </nav>
@@ -382,10 +382,10 @@
             <span class="badge-role">Supervisor</span>
             <div class="user-badge">
                 <div class="user-info">
-                    <strong>Laura S.</strong>
-                    <small>Autorización Múltiple</small>
+                    <strong id="userNombre">...</strong>
+                    <small>Supervisor</small>
                 </div>
-                <div class="avatar">LS</div>
+                <div class="avatar" id="userAvatar">?</div>
             </div>
             <a href="login.html" class="btn-logout" onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
         </div>
@@ -430,13 +430,17 @@
                 </select>
             </div>
 
-            <div class="form-group" style="min-width: 160px;">
-                <label>Dictamen</label>
+            <div class="form-group" style="min-width: 200px;">
+                <label>Estado</label>
                 <select id="filterDictamen">
                     <option value="">Todos</option>
-                    <option value="revision">En Revisión</option>
-                    <option value="aceptado">Aceptado</option>
-                    <option value="rechazado">Rechazado</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Rechazado">Rechazado</option>
+                    <option value="Aceptado">Aceptado</option>
+                    <option value="Aceptado con pago de deducible">Aceptado c/ deducible</option>
+                    <option value="Aceptado sin pago de deducible">Aceptado s/ deducible</option>
+                    <option value="Aplica pago para reparación">Aplica reparación</option>
+                    <option value="Pérdida total">Pérdida total</option>
                 </select>
             </div>
 
@@ -459,81 +463,8 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <span class="s-id">#SIN-2410</span>
-                            <span class="s-date">26/02/2026 14:30</span>
-                        </td>
-                        <td>
-                            <strong>Roberto Díaz</strong><br>
-                            <span style="font-size:0.8rem; color:var(--text-muted);">GNP Seguros</span>
-                        </td>
-                        <td>Carlos A.</td>
-                        <td><span class="badge aceptado">Aceptado</span></td>
-                        <td><span class="badge perdida-total">Pérdida Total</span></td>
-                        <td><a href="vista_supervisor.html?id=2410" class="btn-ver">👁️ Auditar</a></td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <span class="s-id">#SIN-2408</span>
-                            <span class="s-date">15/02/2026 09:15</span>
-                        </td>
-                        <td>
-                            <strong>María Hernández</strong><br>
-                            <span style="font-size:0.8rem; color:var(--text-muted);">Quálitas</span>
-                        </td>
-                        <td>Ana L.</td>
-                        <td><span class="badge aceptado">Aceptado</span></td>
-                        <td><span class="badge pago-deducible">Pago de Deducible</span></td>
-                        <td><a href="vista_supervisor.html?id=2408" class="btn-ver">👁️ Auditar</a></td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <span class="s-id">#SIN-2405</span>
-                            <span class="s-date">10/02/2026 18:45</span>
-                        </td>
-                        <td>
-                            <strong>Auto Transportes Sur</strong><br>
-                            <span style="font-size:0.8rem; color:var(--text-muted);">Zurich</span>
-                        </td>
-                        <td>Jorge M.</td>
-                        <td><span class="badge rechazado">Rechazado</span></td>
-                        <td><span class="badge sin-pago">Sin Pago</span></td>
-                        <td><a href="vista_supervisor.html?id=2405" class="btn-ver">👁️ Auditar</a></td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <span class="s-id">#SIN-2401</span>
-                            <span class="s-date">02/02/2026 11:20</span>
-                        </td>
-                        <td>
-                            <strong>Empresa Logística AC</strong><br>
-                            <span style="font-size:0.8rem; color:var(--text-muted);">AXA</span>
-                        </td>
-                        <td>María P.</td>
-                        <td><span class="badge revision">En Revisión</span></td>
-                        <td><span class="badge sin-pago">Pendiente</span></td>
-                        <td><a href="vista_supervisor.html?id=2401" class="btn-ver">👁️ Auditar</a></td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <span class="s-id">#SIN-2388</span>
-                            <span class="s-date">10/01/2026 10:00</span>
-                        </td>
-                        <td>
-                            <strong>Laura Méndez</strong><br>
-                            <span style="font-size:0.8rem; color:var(--text-muted);">GNP Seguros</span>
-                        </td>
-                        <td>Carlos A.</td>
-                        <td><span class="badge aceptado">Aceptado</span></td>
-                        <td><span class="badge pago-reparacion">Aplica Reparación</span></td>
-                        <td><a href="vista_supervisor.html?id=2388" class="btn-ver">👁️ Auditar</a></td>
-                    </tr>
+                <tbody id="tablaHistorial">
+                    <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);">Cargando historial...</td></tr>
                 </tbody>
             </table>
 
@@ -554,30 +485,102 @@
     </div>
 
     <script>
-        // Formatear campo "Hasta" con fecha de hoy
+        const token = sessionStorage.getItem('sp_token');
+        if (!token) window.location.href = 'login.html';
+
+        const nombre = sessionStorage.getItem('sp_nombre') || '?';
+        document.getElementById('userNombre').textContent = nombre.split(' ')[0];
+        document.getElementById('userAvatar').textContent = nombre.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
         document.getElementById('dateEnd').valueAsDate = new Date();
 
-        function Main() { }
-        Main.prototype.filtrar = function () {
+        function estadoBadge(estado) {
+            const mapa = {
+                'Pendiente': 'revision',
+                'Rechazado': 'rechazado',
+                'Aceptado': 'aceptado',
+                'Aceptado con pago de deducible': 'pago-deducible',
+                'Aceptado sin pago de deducible': 'aceptado',
+                'Aplica pago para reparación': 'pago-reparacion',
+                'Pérdida total': 'perdida-total'
+            };
+            return `<span class="badge ${mapa[estado] || 'sin-pago'}">${estado}</span>`;
+        }
+
+        function formatFecha(iso) {
+            if (!iso) return '—';
+            const d = new Date(iso);
+            return d.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
+                ' ' + d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        async function cargarHistorial(params = {}) {
+            const tbody = document.getElementById('tablaHistorial');
             const btn = document.querySelector('.btn-primary');
             btn.innerHTML = '⌛ Filtrando...';
             btn.disabled = true;
 
-            setTimeout(() => {
+            try {
+                const qs = new URLSearchParams();
+                if (params.desde) qs.set('desde', params.desde);
+                if (params.hasta) qs.set('hasta', params.hasta);
+                if (params.aseguradora) qs.set('aseguradora', params.aseguradora);
+                if (params.estado) qs.set('estado', params.estado);
+
+                const res = await fetch('/api/siniestros/buscar?' + qs.toString(), {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await res.json();
+
+                if (!data.success || data.siniestros.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);">No se encontraron registros.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.siniestros.map(s => `
+                    <tr>
+                        <td>
+                            <span class="s-id">#${s.Folio}</span>
+                            <span class="s-date">${formatFecha(s.FechaRegistro)}</span>
+                        </td>
+                        <td>
+                            <strong>${s.NombreCliente}</strong><br>
+                            <span style="font-size:0.8rem; color:var(--text-muted);">${s.NombreAseguradora}</span>
+                        </td>
+                        <td>${s.NombreAjustador}</td>
+                        <td>${estadoBadge(s.Estado)}</td>
+                        <td>${s.PlacasUnidad} · ${s.MarcaUnidad} ${s.ModeloUnidad}</td>
+                        <td><a href="vista_supervisor.html?id=${s.SiniestroID}" class="btn-ver">👁️ Auditar</a></td>
+                    </tr>
+                `).join('');
+
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--danger);">Error al cargar el historial.</td></tr>';
+            } finally {
                 btn.innerHTML = '🔍 Filtrar Registros';
                 btn.disabled = false;
-            }, 600);
+            }
         }
 
-        const app = new Main();
-        window.filtrar = app.filtrar.bind(app);
+        function filtrar() {
+            cargarHistorial({
+                desde: document.getElementById('dateStart').value,
+                hasta: document.getElementById('dateEnd').value,
+                aseguradora: document.getElementById('filterCompany').value,
+                estado: document.getElementById('filterDictamen').value
+            });
+        }
 
         function resetFiltros() {
             document.getElementById('dateStart').value = '2026-01-01';
             document.getElementById('dateEnd').valueAsDate = new Date();
             document.getElementById('filterCompany').value = '';
             document.getElementById('filterDictamen').value = '';
+            cargarHistorial();
         }
+
+        // Cargar al entrar
+        cargarHistorial();
     </script>
 </body>
 

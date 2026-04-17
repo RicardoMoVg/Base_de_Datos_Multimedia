@@ -6,414 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Ajustador | SegurosPro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* --- DESIGN SYSTEM (Igual que en vistas anteriores) --- */
-        :root {
-            --primary-orange: #ff6b00;
-            --primary-orange-hover: #e65c00;
-            --black: #1a1a1a;
-            --white: #ffffff;
-            --bg-body: #f4f4f5;
-            --border-color: #e4e4e7;
-            --text-main: #27272a;
-            --text-muted: #71717a;
-
-            /* Colores Semánticos para Estados */
-            --success-bg: #dcfce7;
-            --success-text: #166534;
-            --warning-bg: #fef3c7;
-            --warning-text: #92400e;
-            --danger-bg: #fee2e2;
-            --danger-text: #991b1b;
-            --info-bg: #e0f2fe;
-            --info-text: #075985;
-        }
-
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ——— TOPBAR (Navegación Horizontal Oscura) ——— */
-        .topbar {
-            background-color: var(--black);
-            color: var(--white);
-            padding: 0 32px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .topbar-left,
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .topbar-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            margin-right: 16px;
-        }
-
-        .topbar-logo h1 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--white);
-            margin: 0;
-            letter-spacing: -0.02em;
-        }
-
-        .topbar-logo h1 span {
-            color: var(--primary-orange);
-        }
-
-        .topbar-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .topbar-nav a {
-            color: #a1a1aa;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .topbar-nav a:hover {
-            color: var(--white);
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .topbar-nav a.active {
-            color: var(--primary-orange);
-            background-color: rgba(255, 107, 0, 0.1);
-            font-weight: 600;
-        }
-
-        /* Info de Usuario en Topbar */
-        .badge-role {
-            background-color: var(--primary-orange);
-            color: var(--white);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-left: 1px solid #333;
-            padding-left: 24px;
-        }
-
-        .user-info {
-            text-align: right;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-info strong {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--white);
-        }
-
-        .user-info small {
-            font-size: 0.75rem;
-            color: #a1a1aa;
-        }
-
-        .avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background-color: var(--white);
-            color: var(--black);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        /* ——— MAIN CONTENT ——— */
-        .main-content {
-            padding: 40px 32px;
-            max-width: 1300px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .page-header {
-            margin-bottom: 24px;
-        }
-
-        .page-header h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--black);
-            letter-spacing: -0.02em;
-        }
-
-        /* Notice Box - Alerta Visual Soft */
-        .notice-box {
-            background-color: rgba(255, 107, 0, 0.08);
-            border: 1px solid rgba(255, 107, 0, 0.2);
-            border-left: 4px solid var(--primary-orange);
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin-bottom: 32px;
-            display: flex;
-            align-items: center;
-        }
-
-        .notice-box p {
-            font-size: 0.9rem;
-            color: var(--text-main);
-            margin: 0;
-            line-height: 1.5;
-        }
-
-        .notice-box strong {
-            color: var(--black);
-        }
-
-        /* ——— KPIs (Key Performance Indicators) ——— */
-        .grid-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.05);
-            border-color: #d4d4d8;
-        }
-
-        .stat-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-
-        .stat-card .label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .stat-card .icon-wrapper {
-            font-size: 1.5rem;
-            background-color: var(--bg-body);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-        }
-
-        .stat-card .value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--black);
-            margin-bottom: 8px;
-            line-height: 1;
-        }
-
-        .stat-card .sub {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .stat-card .sub.positive {
-            color: #16a34a;
-        }
-
-        .stat-card .sub.warning {
-            color: #d97706;
-        }
-
-        /* ——— PANEL Y TABLA ——— */
-        .panel {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px 32px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-
-        .section-header h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--black);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Botones */
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-orange);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-orange-hover);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--bg-body);
-            border-color: #d4d4d8;
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 0.8rem;
-        }
-
-        /* Tabla */
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
-        }
-
-        tbody tr {
-            transition: background-color 0.2s;
-        }
-
-        tbody tr:hover {
-            background-color: #fafafa;
-        }
-
-        td strong {
-            color: var(--black);
-            font-weight: 600;
-        }
-
-        /* Status Pills (Píldoras de estado) */
-        .pill {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .pill-warning {
-            background-color: var(--warning-bg);
-            color: var(--warning-text);
-        }
-
-        .pill-success {
-            background-color: var(--success-bg);
-            color: var(--success-text);
-        }
-
-        .pill-danger {
-            background-color: var(--danger-bg);
-            color: var(--danger-text);
-        }
-
-        .pill-info {
-            background-color: var(--info-bg);
-            color: var(--info-text);
-        }
-    </style>
-    <link rel="stylesheet" href="topbar_global.css">
+    <link rel="stylesheet" href="/assets/global_styles.css">
+    <link rel="stylesheet" href="/topbar_global.css">
 </head>
 
 <body>
@@ -435,10 +29,10 @@
             <span class="badge-role">Ajustador</span>
             <div class="user-badge">
                 <div class="user-info">
-                    <strong>Carlos A.</strong>
-                    <small>Región Norte</small>
+                    <strong id="userNombre">...</strong>
+                    <small>Ajustador</small>
                 </div>
-                <div class="avatar">CA</div>
+                <div class="avatar" id="userAvatar">?</div>
             </div>
             <a href="login.html" class="btn-logout" onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
         </div>
@@ -508,38 +102,7 @@
                         </tr>
                     </thead>
                     <tbody id="tablaSiniestros">
-                        <tr>
-                            <td><strong>#SIN-2401</strong></td>
-                            <td>María García</td>
-                            <td>Automóvil</td>
-                            <td>10 Feb, 2026</td>
-                            <td><span class="pill pill-warning">En revisión</span></td>
-                            <td><button class="btn btn-outline btn-small">Ver Detalle</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong>#SIN-2402</strong></td>
-                            <td>Roberto Díaz</td>
-                            <td>Hogar</td>
-                            <td>14 Feb, 2026</td>
-                            <td><span class="pill pill-success">Aprobado</span></td>
-                            <td><button class="btn btn-outline btn-small">Ver Detalle</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong>#SIN-2403</strong></td>
-                            <td>Lucía Hernández</td>
-                            <td>Vida</td>
-                            <td>18 Feb, 2026</td>
-                            <td><span class="pill pill-danger">Rechazado</span></td>
-                            <td><button class="btn btn-outline btn-small">Ver Detalle</button></td>
-                        </tr>
-                        <tr>
-                            <td><strong>#SIN-2404</strong></td>
-                            <td>Pedro Santos</td>
-                            <td>Automóvil</td>
-                            <td>20 Feb, 2026</td>
-                            <td><span class="pill pill-info">Investigación</span></td>
-                            <td><button class="btn btn-outline btn-small">Ver Detalle</button></td>
-                        </tr>
+                        <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);">Cargando siniestros...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -548,18 +111,68 @@
     </main>
 
     <script>
-        function nuevoSiniestro() {
-            alert('Abriendo modal para registrar un nuevo siniestro...');
+        const token = sessionStorage.getItem('sp_token');
+        if (!token) window.location.href = 'login.html';
+
+        // Actualizar info del usuario en el topbar
+        const nombre = sessionStorage.getItem('sp_nombre') || '?';
+        document.getElementById('userNombre').textContent = nombre.split(' ')[0];
+        document.getElementById('userAvatar').textContent = nombre.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+        function estadoPill(estado) {
+            const mapa = {
+                'Pendiente': 'pill-warning',
+                'Rechazado': 'pill-danger',
+                'Aceptado': 'pill-success',
+                'Aceptado con pago de deducible': 'pill-info',
+                'Aceptado sin pago de deducible': 'pill-success',
+                'Aplica pago para reparación': 'pill-info',
+                'Pérdida total': 'pill-danger'
+            };
+            const cls = mapa[estado] || 'pill-warning';
+            return `<span class="pill ${cls}">${estado}</span>`;
         }
 
-        // Script para manejar la clase activa en la navegación de forma visual
-        document.querySelectorAll('.topbar-nav a').forEach(link => {
-            link.addEventListener('click', function (e) {
-                if (this.getAttribute('href') === '#') e.preventDefault();
-                document.querySelectorAll('.topbar-nav a').forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+        function formatFecha(iso) {
+            if (!iso) return '—';
+            const d = new Date(iso);
+            return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        async function cargarSiniestros() {
+            const tbody = document.getElementById('tablaSiniestros');
+            try {
+                const res = await fetch('/api/siniestros', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await res.json();
+
+                if (!data.success || data.siniestros.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);">No tienes siniestros registrados aún.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.siniestros.map(s => `
+                    <tr>
+                        <td><strong>#${s.Folio}</strong></td>
+                        <td>${s.NombreCliente}</td>
+                        <td>${s.MarcaUnidad} ${s.ModeloUnidad}</td>
+                        <td>${formatFecha(s.FechaIncidente)}</td>
+                        <td>${estadoPill(s.Estado)}</td>
+                        <td><a href="seguimiento_siniestro.html?id=${s.SiniestroID}" class="btn btn-outline btn-small">Ver Detalle</a></td>
+                    </tr>
+                `).join('');
+
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--danger);">Error al cargar los siniestros.</td></tr>';
+            }
+        }
+
+        function nuevoSiniestro() {
+            window.location.href = 'registro_siniestro.html';
+        }
+
+        cargarSiniestros();
     </script>
 </body>
 

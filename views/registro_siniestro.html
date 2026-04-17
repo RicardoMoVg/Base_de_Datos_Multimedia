@@ -6,481 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Siniestro | SegurosPro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* --- DESIGN SYSTEM --- */
-        :root {
-            --primary-orange: #ff6b00;
-            --primary-orange-hover: #e65c00;
-            --black: #1a1a1a;
-            --white: #ffffff;
-            --bg-body: #f4f4f5;
-            --border-color: #e4e4e7;
-            --text-main: #27272a;
-            --text-muted: #71717a;
-
-            /* Semántica */
-            --danger: #ef4444;
-            --danger-bg: #fee2e2;
-            --warning: #f59e0b;
-            --warning-bg: #fef3c7;
-            --success: #10b981;
-            --info: #3b82f6;
-        }
-
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ——— TOPBAR ——— */
-        .topbar {
-            background-color: var(--black);
-            color: var(--white);
-            padding: 0 32px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .topbar-left,
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .topbar-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            margin-right: 16px;
-        }
-
-        .topbar-logo h1 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--white);
-            margin: 0;
-            letter-spacing: -0.02em;
-        }
-
-        .topbar-logo h1 span {
-            color: var(--primary-orange);
-        }
-
-        .topbar-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .topbar-nav a {
-            color: #a1a1aa;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .topbar-nav a:hover {
-            color: var(--white);
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .topbar-nav a.active {
-            color: var(--primary-orange);
-            background-color: rgba(255, 107, 0, 0.1);
-            font-weight: 600;
-        }
-
-        .badge-role {
-            background-color: var(--primary-orange);
-            color: var(--white);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-left: 1px solid #333;
-            padding-left: 24px;
-        }
-
-        .user-info {
-            text-align: right;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-info strong {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--white);
-        }
-
-        .user-info small {
-            font-size: 0.75rem;
-            color: #a1a1aa;
-        }
-
-        .avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background-color: var(--white);
-            color: var(--black);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        /* Botones */
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-orange);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-orange-hover);
-            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-        }
-
-        .btn-outline:hover {
-            background: var(--bg-body);
-            border-color: #d4d4d8;
-        }
-
-        /* ——— MAIN CONTENT ——— */
-        .main-content {
-            padding: 40px 32px;
-            max-width: 900px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            margin-bottom: 24px;
-            transition: color 0.2s;
-        }
-
-        .back-link:hover {
-            color: var(--primary-orange);
-        }
-
-        .page-header {
-            margin-bottom: 24px;
-        }
-
-        .page-header h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--black);
-            letter-spacing: -0.02em;
-        }
-
-        .notice-box {
-            background-color: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-left: 4px solid var(--info);
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin-bottom: 32px;
-            display: flex;
-            align-items: center;
-        }
-
-        .notice-box p {
-            font-size: 0.95rem;
-            color: var(--info);
-            margin: 0;
-            line-height: 1.5;
-        }
-
-        .notice-box strong {
-            color: #1e3a8a;
-        }
-
-        /* Panel Formulario */
-        .panel {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 32px;
-            margin-bottom: 24px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-        }
-
-        .section-header {
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .section-header h3 {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--black);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
-        .form-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--black);
-            margin-bottom: 8px;
-        }
-
-        select,
-        input[type="text"],
-        input[type="date"],
-        textarea {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            background: #fafafa;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        select:focus,
-        input:focus,
-        textarea:focus {
-            background: var(--white);
-            border-color: var(--primary-orange);
-            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15);
-        }
-
-        /* --- DRAG & DROP UPLOADER COMPONENT --- */
-        .uploader-area {
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
-            background-color: #f8fafc;
-            padding: 40px 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            margin-top: 8px;
-        }
-
-        .uploader-area:hover,
-        .uploader-area.dragover {
-            border-color: var(--primary-orange);
-            background-color: #fff7ed;
-        }
-
-        .uploader-area.dragover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 15px -3px rgba(255, 107, 0, 0.1);
-        }
-
-        .uploader-icon {
-            font-size: 40px;
-            margin-bottom: 16px;
-            display: inline-block;
-            transition: transform 0.3s;
-        }
-
-        .uploader-area.dragover .uploader-icon {
-            transform: translateY(-10px);
-        }
-
-        .uploader-text h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--black);
-            margin-bottom: 8px;
-        }
-
-        .uploader-text p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin: 0;
-            line-height: 1.5;
-        }
-
-        .uploader-text span {
-            color: var(--primary-orange);
-            font-weight: 600;
-        }
-
-        #fileInput {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        /* Thumbnails Grid */
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 16px;
-            margin-top: 24px;
-        }
-
-        .preview-item {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            background: var(--white);
-            aspect-ratio: 1;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            animation: fadeIn 0.3s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .preview-item .file-generic {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #f1f5f9;
-            color: var(--text-muted);
-            font-size: 24px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .file-generic span {
-            font-size: 0.65rem;
-            margin-top: 8px;
-            word-break: break-all;
-            font-weight: 600;
-        }
-
-        .remove-btn {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-            z-index: 10;
-        }
-
-        .remove-btn:hover {
-            background: var(--danger);
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/registro_siniestro.css">
     <link rel="stylesheet" href="topbar_global.css">
 </head>
 
 <body>
 
-                <header class="topbar">
+    <header class="topbar">
         <div class="topbar-left">
             <a href="dash_ajustador.html" class="topbar-logo">
                 <h1>Seguros<span>Pro</span></h1>
@@ -497,10 +29,10 @@
             <span class="badge-role">Ajustador</span>
             <div class="user-badge">
                 <div class="user-info">
-                    <strong>Carlos A.</strong>
-                    <small>Región Norte</small>
+                    <strong id="userNombre">...</strong>
+                    <small>Ajustador</small>
                 </div>
-                <div class="avatar">CA</div>
+                <div class="avatar" id="userAvatar">?</div>
             </div>
             <a href="login.html" class="btn-logout" onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
         </div>
@@ -649,6 +181,13 @@
     </main>
 
     <script>
+        // Verificar sesión y cargar usuario
+        const _token = sessionStorage.getItem('sp_token');
+        if (!_token) window.location.href = 'login.html';
+        const _nombre = sessionStorage.getItem('sp_nombre') || '?';
+        document.getElementById('userNombre').textContent = _nombre.split(' ')[0];
+        document.getElementById('userAvatar').textContent = _nombre.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
         // --- LÓGICA DE UPLOAD DRAG & DROP MULTIMEDIA ---
         const dropzone = document.getElementById('dropzone');
         const fileInput = document.getElementById('fileInput');
@@ -764,21 +303,66 @@
         }
 
         // --- SUBMIT DEL FORMULARIO ---
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            btnSubmit.innerHTML = '<span class="spinner" style="display:inline-block; width:16px; height:16px; border:2px solid #fff; border-bottom-color:transparent; border-radius:50%; animation: spin 1s linear infinite; margin-right:8px;"></span> Guardando...';
+
+            const token = sessionStorage.getItem('sp_token');
+            if (!token) {
+                alert('Sesión expirada. Por favor inicia sesión de nuevo.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            btnSubmit.innerHTML = '<span class="spinner"></span> Guardando...';
             btnSubmit.disabled = true;
 
-            // Simulación de envío a SQL (Próxima etapa podríamos conectarlo real a multer)
-            setTimeout(() => {
-                alert(`¡Siniestro generado con éxito!\nSe cargaron ${selectedFiles.length} archivos multimedia al expediente.`);
-                window.location.href = 'dash_ajustador.html';
-            }, 1500);
+            try {
+                const fd = new FormData();
+                fd.append('nombreAseguradora', document.getElementById('nombreAseguradora').value);
+                fd.append('noPoliza', document.getElementById('noPoliza').value);
+                fd.append('nombreCliente', document.getElementById('nombreCliente').value);
+                fd.append('marcaUnidad', document.getElementById('marcaUnidad').value);
+                fd.append('modeloUnidad', document.getElementById('modeloUnidad').value);
+                fd.append('placasUnidad', document.getElementById('placasUnidad').value);
+                fd.append('serieUnidad', document.getElementById('serieUnidad').value);
+                fd.append('fechaIncidente', document.getElementById('fechaIncidente').value);
+                fd.append('horaIncidente', document.getElementById('horaIncidente').value);
+                fd.append('lugarIncidente', document.getElementById('lugarIncidente').value);
+                fd.append('involucrados', document.getElementById('involucrados').value);
+                fd.append('descripcion', document.getElementById('descripcion').value);
+
+                selectedFiles.forEach(file => fd.append('archivos', file));
+
+                const res = await fetch('/api/siniestros', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: fd
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert(`¡Expediente registrado con éxito!\nFolio: ${data.folio}\nArchivos cargados: ${selectedFiles.length}`);
+                    window.location.href = 'dash_ajustador.html';
+                } else {
+                    alert('Error: ' + data.message);
+                    btnSubmit.innerHTML = 'Guardar Expediente Completo';
+                    btnSubmit.disabled = false;
+                }
+            } catch (err) {
+                alert('Error de conexión con el servidor.');
+                btnSubmit.innerHTML = 'Guardar Expediente Completo';
+                btnSubmit.disabled = false;
+            }
         });
 
-        // Estilos para la minúscula animación del botón (in-line for ease)
         const style = document.createElement('style');
-        style.innerHTML = `@keyframes spin { 100% { transform: rotate(360deg); } }`;
+        style.innerHTML = `
+            @keyframes spin { 100% { transform: rotate(360deg); } }
+            .spinner { display:inline-block; width:14px; height:14px; border:2px solid #fff;
+                       border-bottom-color:transparent; border-radius:50%;
+                       animation:spin 1s linear infinite; margin-right:8px; vertical-align:middle; }
+        `;
         document.head.appendChild(style);
 
     </script>
