@@ -18,6 +18,7 @@
                 <h1>Seguros<span>Pro</span></h1>
             </a>
             <nav class="topbar-nav">
+                <a href="consulta_siniestros.html">Consulta Siniestros</a>
                 <a class="active" href="dash_supervisor.html">Panel de Control</a>
                 <a href="vista_supervisor.html">Autorizaciones</a>
                 <a href="historial_global.html">Historial Global</a>
@@ -174,7 +175,11 @@
 
     <script>
         const token = sessionStorage.getItem('sp_token');
-        if (!token) window.location.href = 'login.html';
+        const tipo  = sessionStorage.getItem('sp_tipo');
+        if (!token || tipo !== 'Supervisor') {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
 
         const nombre = sessionStorage.getItem('sp_nombre') || '?';
         document.getElementById('userNombre').textContent = nombre.split(' ')[0];
@@ -228,7 +233,10 @@
                         <td>${s.NombreCliente}</td>
                         <td>${s.NombreAjustador}</td>
                         <td>${estadoPill(s.Estado)}</td>
-                        <td><a href="vista_supervisor.html?id=${s.SiniestroID}" class="btn btn-outline">Auditar</a></td>
+                        <td style="display:flex;gap:6px;">
+                            <a href="seguimiento_siniestro.html?id=${s.SiniestroID}" class="btn btn-outline">Chat</a>
+                            <a href="vista_supervisor.html?id=${s.SiniestroID}" class="btn btn-outline">Auditar</a>
+                        </td>
                     </tr>
                 `).join('');
 

@@ -541,6 +541,7 @@
                 <h1>Seguros<span>Pro</span></h1>
             </a>
             <nav class="topbar-nav">
+                <a href="consulta_siniestros.html">Consulta Siniestros</a>
                 <a class="active" href="dash_asegurado.html">Mi Unidad</a>
                 <a href="seguimiento_siniestro.html">Seguimiento</a>
                 <a href="historial_pagos.html">Historial de Pagos</a>
@@ -588,24 +589,24 @@
                     <div class="label">Mis Siniestros</div>
                     <div class="icon-wrapper" style="background: var(--info-bg); color: var(--info);">📋</div>
                 </div>
-                <div class="value">3</div>
-                <div class="sub">1 activo actualmente</div>
+                <div class="value" id="kpiTotal">—</div>
+                <div class="sub" id="kpiActivoSub">Cargando...</div>
             </div>
             <div class="stat-card">
                 <div class="stat-card-header">
                     <div class="label">Resueltos</div>
                     <div class="icon-wrapper" style="background: var(--success-bg); color: var(--success);">✅</div>
                 </div>
-                <div class="value">2</div>
-                <div class="sub" style="color: var(--success);">Cerrados sin incidencias</div>
+                <div class="value" id="kpiResueltos">—</div>
+                <div class="sub" style="color: var(--success);" id="kpiResueltosSub">Cargando...</div>
             </div>
             <div class="stat-card">
                 <div class="stat-card-header">
-                    <div class="label">Documentos</div>
-                    <div class="icon-wrapper" style="background: var(--warning-bg); color: var(--warning);">📁</div>
+                    <div class="label">Pendientes</div>
+                    <div class="icon-wrapper" style="background: var(--warning-bg); color: var(--warning);">⏳</div>
                 </div>
-                <div class="value">8</div>
-                <div class="sub">Archivos subidos</div>
+                <div class="value" id="kpiPendientes">—</div>
+                <div class="sub">Esperando dictamen</div>
             </div>
             <div class="stat-card">
                 <div class="stat-card-header">
@@ -630,13 +631,14 @@
                     <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Tipo</th>
+                            <th>Vehículo</th>
                             <th>Fecha</th>
                             <th>Estado</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="tablaSiniestros">
-                        <tr><td colspan="4" style="text-align:center;padding:16px;color:var(--text-muted);">Cargando...</td></tr>
+                        <tr><td colspan="5" style="text-align:center;padding:16px;color:var(--text-muted);">Cargando...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -716,11 +718,20 @@
 
     <script>
         const token = sessionStorage.getItem('sp_token');
-        if (!token) window.location.href = 'login.html';
+        const tipo  = sessionStorage.getItem('sp_tipo');
+        if (!token || tipo !== 'Asegurado') {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
 
         const nombre = sessionStorage.getItem('sp_nombre') || '?';
         document.getElementById('userNombre').textContent = nombre.split(' ')[0];
         document.getElementById('userAvatar').textContent = nombre.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+        // Saludo dinámico
+        const hora = new Date().getHours();
+        const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
+        document.querySelector('.hero-text h3').textContent = `¡${saludo}, ${nombre.split(' ')[0]}! 👋`;
 
         // ── Modal ──────────────────────────────────────────────────
         const overlay = document.getElementById('modalOverlay');
@@ -758,6 +769,19 @@
             return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
         }
 
+        function actualizarKPIs(lista) {
+            const total      = lista.length;
+            const pendientes = lista.filter(s => s.Estado === 'Pendiente').length;
+            const resueltos  = lista.filter(s => !['Pendiente', 'Rechazado'].includes(s.Estado)).length;
+            const activos    = lista.filter(s => s.Estado === 'Pendiente').length;
+
+            document.getElementById('kpiTotal').textContent      = total;
+            document.getElementById('kpiActivoSub').textContent  = activos === 1 ? '1 activo actualmente' : `${activos} activos actualmente`;
+            document.getElementById('kpiResueltos').textContent  = resueltos;
+            document.getElementById('kpiResueltosSub').textContent = resueltos > 0 ? 'Cerrados exitosamente' : 'Sin resoluciones aún';
+            document.getElementById('kpiPendientes').textContent = pendientes;
+        }
+
         async function cargarSiniestros() {
             const tbody = document.getElementById('tablaSiniestros');
             try {
@@ -767,9 +791,12 @@
                 const data = await res.json();
 
                 if (!data.success || data.siniestros.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:16px;color:var(--text-muted);">No tienes siniestros registrados.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--text-muted);">No tienes siniestros registrados.</td></tr>';
+                    actualizarKPIs([]);
                     return;
                 }
+
+                actualizarKPIs(data.siniestros);
 
                 tbody.innerHTML = data.siniestros.slice(0, 5).map(s => `
                     <tr>
@@ -777,6 +804,7 @@
                         <td>${s.MarcaUnidad} ${s.ModeloUnidad}</td>
                         <td>${formatFecha(s.FechaIncidente)}</td>
                         <td>${estadoPill(s.Estado)}</td>
+                        <td><a href="seguimiento_siniestro.html?id=${s.SiniestroID}" class="btn btn-outline" style="padding:5px 12px;font-size:0.78rem;">Ver</a></td>
                     </tr>
                 `).join('');
             } catch (err) {

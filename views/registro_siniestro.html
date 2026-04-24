@@ -81,6 +81,17 @@
                         <label for="noPoliza">Número de Póliza *</label>
                         <input type="text" id="noPoliza" placeholder="Ej. POL-123456" required>
                     </div>
+                    <div class="form-group full-width" style="position: relative;">
+                        <label for="buscarAsegurado">Vincular cuenta de usuario Asegurado (Opcional)</label>
+                        <input type="text" id="buscarAsegurado" placeholder="Busca por nombre o correo del asegurado registrado..."
+                            autocomplete="off">
+                        <input type="hidden" id="aseguradoId" value="">
+                        <div id="aseguradoResultados" style="position:absolute; top:100%; left:0; right:0; background:white; border:1px solid var(--border-color, #e4e4e7); border-radius:8px; max-height:200px; overflow-y:auto; z-index:100; display:none; box-shadow:0 8px 24px rgba(0,0,0,0.1);"></div>
+                        <div id="aseguradoSeleccionado" style="display:none; margin-top:8px; padding:10px 14px; background:#d1fae5; border-radius:8px; font-size:0.85rem; color:#065f46; font-weight:600; justify-content:space-between; align-items:center;">
+                            <span id="aseguradoNombre"></span>
+                            <button type="button" onclick="desvincularAsegurado()" style="background:none; border:none; cursor:pointer; font-size:1rem; color:#065f46;">✕</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -331,6 +342,12 @@
                 fd.append('involucrados', document.getElementById('involucrados').value);
                 fd.append('descripcion', document.getElementById('descripcion').value);
 
+                // Vincular Asegurado si fue seleccionado
+                const aseguradoIdVal = document.getElementById('aseguradoId').value;
+                if (aseguradoIdVal) {
+                    fd.append('aseguradoId', aseguradoIdVal);
+                }
+
                 selectedFiles.forEach(file => fd.append('archivos', file));
 
                 const res = await fetch('/api/siniestros', {
@@ -364,6 +381,73 @@
                        animation:spin 1s linear infinite; margin-right:8px; vertical-align:middle; }
         `;
         document.head.appendChild(style);
+
+        /* ── Búsqueda de Asegurados registrados ────────────────── */
+        let searchTimeout = null;
+        const buscarInput = document.getElementById('buscarAsegurado');
+        const resultados  = document.getElementById('aseguradoResultados');
+        const seleccionado = document.getElementById('aseguradoSeleccionado');
+        const aseguradoNombre = document.getElementById('aseguradoNombre');
+        const aseguradoIdInput = document.getElementById('aseguradoId');
+
+        buscarInput.addEventListener('input', function () {
+            clearTimeout(searchTimeout);
+            const q = this.value.trim();
+            if (q.length < 2) { resultados.style.display = 'none'; return; }
+
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const token = sessionStorage.getItem('sp_token');
+                    const res = await fetch(`/api/usuarios/asegurados?q=${encodeURIComponent(q)}`, {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    const data = await res.json();
+                    if (!data.success || data.usuarios.length === 0) {
+                        resultados.innerHTML = '<div style="padding:12px 16px; font-size:0.85rem; color:#71717a;">Sin resultados</div>';
+                        resultados.style.display = 'block';
+                        return;
+                    }
+                    resultados.innerHTML = data.usuarios.map(u => `
+                        <div onclick="seleccionarAsegurado(${u.UsuarioID}, '${(u.Nombre + ' ' + u.Apellidos).replace(/'/g, "\\'")}', '${u.Correo}')"
+                             style="padding:10px 16px; cursor:pointer; font-size:0.9rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f4f4f5; transition: background 0.15s;"
+                             onmouseover="this.style.background='#f4f4f5'" onmouseout="this.style.background='white'">
+                            <span><strong>${u.Nombre} ${u.Apellidos}</strong></span>
+                            <span style="font-size:0.75rem; color:#71717a;">${u.Correo}</span>
+                        </div>
+                    `).join('');
+                    resultados.style.display = 'block';
+                } catch { resultados.style.display = 'none'; }
+            }, 300);
+        });
+
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#buscarAsegurado') && !e.target.closest('#aseguradoResultados')) {
+                resultados.style.display = 'none';
+            }
+        });
+
+        window.seleccionarAsegurado = function (id, nombre, correo) {
+            aseguradoIdInput.value = id;
+            aseguradoNombre.textContent = `✅ ${nombre} (${correo})`;
+            seleccionado.style.display = 'flex';
+            buscarInput.value = '';
+            buscarInput.style.display = 'none';
+            resultados.style.display = 'none';
+
+            // Auto-fill NombreCliente si está vacío
+            const nombreClienteInput = document.getElementById('nombreCliente');
+            if (!nombreClienteInput.value.trim()) {
+                nombreClienteInput.value = nombre;
+            }
+        };
+
+        window.desvincularAsegurado = function () {
+            aseguradoIdInput.value = '';
+            seleccionado.style.display = 'none';
+            buscarInput.style.display = '';
+            buscarInput.value = '';
+        };
 
     </script>
 </body>

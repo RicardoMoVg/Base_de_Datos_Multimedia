@@ -9,20 +9,43 @@
         rel="stylesheet">
     <link rel="stylesheet" href="/assets/registro.css">
     <link rel="stylesheet" href="/topbar_global.css">
-
+    <style>
+        .role-desc {
+            display: none;
+            margin-bottom: 24px;
+            border-radius: 10px;
+            padding: 16px 20px;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            border-left: 4px solid;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .role-desc.ajustador {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #1e40af;
+        }
+        .role-desc.supervisor {
+            background: #f5f3ff;
+            border-color: #8b5cf6;
+            color: #5b21b6;
+        }
+        .role-desc.asegurado {
+            background: #f0fdf4;
+            border-color: #22c55e;
+            color: #166534;
+        }
+        .role-desc strong { display: block; margin-bottom: 6px; font-size: 0.9rem; }
+        .role-desc ul { margin: 0; padding-left: 18px; }
+        .role-desc ul li { margin-bottom: 3px; }
+    </style>
 </head>
 
 <body>
-    <header class="topbar">
-        <div class="topbar-left">
-            <a href="/views/login.html" class="topbar-logo">
-                <h1>Seguros<span>Pro</span></h1>
-            </a>
-        </div>
-    </header>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-
     <div class="register-card">
         <div class="logo">
             <h1>Seguros<span>Pro</span></h1>
@@ -98,6 +121,8 @@
                 </div>
             </div>
 
+            <div id="roleDesc" class="role-desc"></div>
+
             <div class="grid-2">
                 <div class="form-group">
                     <label for="password">Contraseña</label>
@@ -157,6 +182,54 @@
             submitText.textContent = on ? 'Registrando...' : 'Registrar Cuenta';
             spinner.style.display = on ? 'block' : 'none';
         }
+
+        // ── Descripción dinámica del rol ─────────────────────────────────────
+        const rolSelect = document.getElementById('rol');
+        const roleDescBox = document.getElementById('roleDesc');
+
+        const ROLE_INFO = {
+            ajustador: {
+                cls: 'ajustador',
+                title: 'Ajustador — Acceso operativo',
+                items: [
+                    'Registra nuevos siniestros con todos sus datos.',
+                    'Carga fotos y videos como evidencia del incidente.',
+                    'Solo puede ver los siniestros que tú hayas registrado.',
+                    'Puede agregar comentarios y dar seguimiento.'
+                ]
+            },
+            supervisor: {
+                cls: 'supervisor',
+                title: 'Supervisor — Acceso administrativo',
+                items: [
+                    'Visualiza y audita TODOS los siniestros del sistema.',
+                    'Autoriza pagos y determina el tipo de resolución.',
+                    'Define si aplica reparación o pérdida total.',
+                    'Sube fotos de reparaciones y cierra expedientes.'
+                ]
+            },
+            asegurado: {
+                cls: 'asegurado',
+                title: 'Asegurado — Portal del cliente',
+                items: [
+                    'Consulta únicamente tus propios siniestros.',
+                    'Da seguimiento al estado de reparación de tu unidad.',
+                    'Recibe notificaciones de avance en tu expediente.',
+                    'Descarga documentos relacionados a tu póliza.'
+                ]
+            }
+        };
+
+        rolSelect.addEventListener('change', function () {
+            const info = ROLE_INFO[this.value];
+            if (!info) { roleDescBox.style.display = 'none'; return; }
+            roleDescBox.className = `role-desc ${info.cls}`;
+            roleDescBox.innerHTML = `
+                <strong>${info.title}</strong>
+                <ul>${info.items.map(i => `<li>${i}</li>`).join('')}</ul>
+            `;
+            roleDescBox.style.display = 'block';
+        });
 
         // ── Indicador de fuerza de contraseña ────────────────────────────────
         const pwdInput = document.getElementById('password');

@@ -4,449 +4,1141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta de Siniestros | Seguros</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Consulta de Siniestros | SegurosPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/topbar_global.css">
     <style>
-        /* Definición de la Paleta: Blanco, Negro y Naranja */
+        /* ── DESIGN SYSTEM ───────────────────────────────────────────── */
         :root {
-            --primary-orange: #ff6b00;
-            /* Naranja vibrante y moderno */
-            --primary-orange-hover: #e65c00;
-            --black: #1a1a1a;
-            /* Un negro ligeramente suave para la lectura */
-            --pure-black: #000000;
-            --white: #ffffff;
-            --bg-body: #f4f4f5;
-            /* Gris muy claro para dar profundidad a las tarjetas blancas */
-            --border-color: #e4e4e7;
-            --text-main: #27272a;
-            --text-muted: #71717a;
+            --primary:        #ff6b00;
+            --primary-dark:   #e65c00;
+            --black:          #1a1a1a;
+            --white:          #ffffff;
+            --bg:             #f4f4f5;
+            --border:         #e4e4e7;
+            --text:           #27272a;
+            --muted:          #71717a;
+
+            --success-bg:    #d1fae5; --success-text: #065f46;
+            --warning-bg:    #fef3c7; --warning-text: #92400e;
+            --danger-bg:     #fee2e2; --danger-text:  #991b1b;
+            --info-bg:       #dbeafe; --info-text:    #1e40af;
+            --neutral-bg:    #f4f4f5; --neutral-text: #52525b;
+
+            --ajustador-bg:   #dbeafe; --ajustador-text:  #1e40af;
+            --supervisor-bg:  #f5f3ff; --supervisor-text: #5b21b6;
+            --asegurado-bg:   #d1fae5; --asegurado-text:  #065f46;
         }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            margin: 0;
-            padding-bottom: 40px;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
         }
 
-        /* Topbar - Diseño en Negro para contraste arquitectónico */
+        /* ── TOPBAR ──────────────────────────────────────────────────── */
         .topbar {
-            background-color: var(--pure-black);
+            background: var(--black);
             color: var(--white);
-            padding: 16px 32px;
+            height: 64px;
+            padding: 0 28px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: sticky;
             top: 0;
-            z-index: 50;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 40;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
-        .topbar h2 {
+        .topbar-left, .topbar-right { display: flex; align-items: center; gap: 20px; }
+
+        .topbar-logo {
+            text-decoration: none;
             font-size: 1.25rem;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: -0.02em;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -0.03em;
+            margin-right: 8px;
         }
 
-        .topbar-nav {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-        }
+        .topbar-logo span { color: var(--primary); }
+
+        .topbar-nav { display: flex; gap: 4px; }
 
         .topbar-nav a {
-            color: rgba(255, 255, 255, 0.7);
+            color: #a1a1aa;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             font-weight: 500;
-            transition: color 0.2s, border-bottom 0.2s;
-            padding-bottom: 4px;
-            border-bottom: 2px solid transparent;
+            padding: 7px 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
         }
 
-        .topbar-nav a:hover {
-            color: var(--white);
-        }
+        .topbar-nav a:hover     { color: var(--white); background: rgba(255,255,255,0.06); }
+        .topbar-nav a.active    { color: var(--primary); background: rgba(255,107,0,0.1); font-weight: 600; }
 
-        /* Enlace activo con el acento naranja */
-        .topbar-nav a.active {
-            color: var(--white);
-            border-bottom: 2px solid var(--primary-orange);
-            font-weight: 600;
-        }
-
-        .badge {
-            background-color: var(--primary-orange);
-            padding: 4px 12px;
+        .badge-role {
+            padding: 3px 12px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
-            color: var(--pure-black);
-            /* Texto negro sobre naranja resalta excelente */
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
         }
 
+        .badge-ajustador  { background: var(--ajustador-bg);  color: var(--ajustador-text); }
+        .badge-supervisor { background: var(--supervisor-bg); color: var(--supervisor-text); }
+        .badge-asegurado  { background: var(--asegurado-bg);  color: var(--asegurado-text); }
+
+        .user-badge { display: flex; align-items: center; gap: 10px; border-left: 1px solid #333; padding-left: 20px; }
+        .user-info strong { display: block; font-size: 0.875rem; color: var(--white); }
+        .user-info small  { font-size: 0.75rem; color: #a1a1aa; }
+
+        .avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--white);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+        }
+
+        .btn-logout {
+            text-decoration: none; color: #a1a1aa; font-size: 0.85rem;
+            padding: 6px 14px; border: 1px solid #3f3f46; border-radius: 6px; transition: all 0.2s;
+        }
+        .btn-logout:hover { color: var(--white); border-color: #71717a; }
+
+        /* ── LAYOUT ──────────────────────────────────────────────────── */
         .container {
-            max-width: 1000px;
-            margin: 40px auto 0;
-            padding: 0 20px;
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 32px 20px 48px;
         }
 
-        .page-title {
-            font-weight: 700;
+        .page-header { margin-bottom: 28px; }
+
+        .page-header h1 {
             font-size: 1.75rem;
-            margin-bottom: 24px;
+            font-weight: 700;
             color: var(--black);
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
         }
 
-        /* Panel principal - Tarjeta Blanca */
-        .panel {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            margin-bottom: 24px;
-        }
-
-        .panel-description {
+        .page-header p {
             font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 24px;
+            color: var(--muted);
             line-height: 1.5;
         }
 
-        /* Formulario de Filtros */
-        .form-row {
+        /* ── FILTER PANEL ────────────────────────────────────────────── */
+        .filter-panel {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .filter-panel h2 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--black);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-row {
             display: flex;
             gap: 16px;
-            margin-bottom: 32px;
             align-items: flex-end;
-            background-color: var(--bg-body);
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
         }
 
-        .form-group {
+        .filter-group {
             display: flex;
             flex-direction: column;
-            flex: 1;
-        }
-
-        label {
-            font-size: 0.75rem;
-            color: var(--black);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-        }
-
-        input,
-        select {
-            padding: 12px;
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        input:focus,
-        select:focus {
-            border-color: var(--primary-orange);
-            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
-        }
-
-        /* Botones */
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            background-color: var(--black);
-            color: var(--white);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-
-        .btn:hover {
-            background-color: #333;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-orange);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-orange-hover);
-        }
-
-        /* Tabla de Datos */
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 10px;
-            font-size: 0.9rem;
-        }
-
-        th,
-        td {
-            padding: 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            background-color: var(--white);
-        }
-
-        tbody tr {
-            transition: background-color 0.2s;
-        }
-
-        tbody tr:hover {
-            background-color: #fafafa;
-        }
-
-        td strong {
-            color: var(--black);
-            font-weight: 600;
-        }
-
-        .status-text {
-            color: var(--primary-orange);
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
             gap: 6px;
         }
 
-        /* Pequeño punto indicador de estado */
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--primary-orange);
+        .filter-group label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .filter-group input[type="date"],
+        .filter-group select {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text);
+            background: var(--white);
+            outline: none;
+            transition: border-color 0.2s;
+            min-width: 160px;
+        }
+
+        .filter-group input[type="date"]:focus,
+        .filter-group select:focus { border-color: var(--primary); }
+
+        .btn-buscar {
+            padding: 10px 24px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+            height: 42px;
+        }
+
+        .btn-buscar:hover:not(:disabled) { background: var(--primary-dark); }
+        .btn-buscar:disabled { opacity: 0.55; cursor: not-allowed; }
+
+        .btn-limpiar {
+            padding: 10px 18px;
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            height: 42px;
+        }
+
+        .btn-limpiar:hover { border-color: #a1a1aa; color: var(--text); }
+
+        .btn-spinner {
+            width: 15px; height: 15px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top-color: white;
             border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── RESULTS PANEL ───────────────────────────────────────────── */
+        .results-panel {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            overflow: hidden;
+        }
+
+        .results-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .results-header h2 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .results-count {
+            font-size: 0.8rem;
+            color: var(--muted);
+            background: var(--bg);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* ── TABLE ───────────────────────────────────────────────────── */
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        thead { background: var(--bg); }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--muted);
+            white-space: nowrap;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--bg);
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: #fafafa; }
+
+        td strong { font-weight: 700; color: var(--black); }
+        td small   { font-size: 0.75rem; color: var(--muted); display: block; margin-top: 2px; }
+
+        /* Estado badges */
+        .pill {
+            padding: 4px 11px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            white-space: nowrap;
             display: inline-block;
         }
 
-        .btn-small {
-            padding: 8px 16px;
-            font-size: 0.8rem;
-            background-color: transparent;
-            color: var(--black);
-            border: 1px solid var(--border-color);
+        .pill-warning  { background: var(--warning-bg);  color: var(--warning-text); }
+        .pill-success  { background: var(--success-bg);  color: var(--success-text); }
+        .pill-danger   { background: var(--danger-bg);   color: var(--danger-text); }
+        .pill-info     { background: var(--info-bg);     color: var(--info-text); }
+        .pill-neutral  { background: var(--neutral-bg);  color: var(--neutral-text); }
+
+        /* Tipo pago */
+        .pay-cell { display: flex; flex-direction: column; gap: 2px; }
+
+        .pay-label {
+            font-size: 0.78rem;
+            font-weight: 600;
         }
 
-        .btn-small:hover {
-            border-color: var(--black);
-            background-color: var(--bg-body);
+        .pay-pending   { color: var(--warning-text); }
+        .pay-none      { color: var(--muted); }
+        .pay-deducible { color: var(--info-text); }
+        .pay-free      { color: var(--success-text); }
+        .pay-repair    { color: var(--info-text); }
+        .pay-total     { color: var(--danger-text); }
+        .pay-process   { color: var(--muted); }
+
+        /* Botón ver detalle */
+        .btn-detalle {
+            padding: 7px 14px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-detalle:hover { border-color: var(--primary); color: var(--primary); background: #fff7ed; }
+
+        /* ── EMPTY / LOADING STATES ──────────────────────────────────── */
+        .state-box {
+            padding: 60px 24px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .state-box .state-icon { font-size: 2.8rem; opacity: 0.45; }
+        .state-box .state-title { font-size: 1rem; font-weight: 700; color: var(--black); }
+        .state-box .state-msg   { font-size: 0.875rem; color: var(--muted); max-width: 340px; line-height: 1.5; }
+
+        .skeleton-row td { padding: 14px 16px; }
+
+        .skel {
+            height: 14px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.3s infinite;
+        }
+
+        @keyframes shimmer { to { background-position: -200% 0; } }
+
+        /* ── MODAL DE DETALLE ────────────────────────────────────────── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+        .modal::-webkit-scrollbar { width: 6px; }
+        .modal::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 4px; }
+
+        /* Modal header */
+        .modal-header {
+            padding: 22px 28px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            z-index: 2;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header-left { display: flex; flex-direction: column; gap: 6px; }
+        .modal-header-left h2 { font-size: 1.2rem; font-weight: 700; color: var(--black); }
+        .modal-header-left .modal-sub { font-size: 0.85rem; color: var(--muted); }
+
+        .modal-close {
+            width: 34px; height: 34px; border-radius: 50%;
+            border: 1px solid var(--border);
+            background: transparent;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: var(--muted);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover { background: var(--bg); color: var(--text); }
+
+        /* Modal body: dos columnas */
+        .modal-body {
+            padding: 24px 28px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+
+        @media (max-width: 680px) {
+            .modal-body { grid-template-columns: 1fr; }
+        }
+
+        .modal-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 8px 0;
+            font-size: 0.875rem;
+            gap: 12px;
+            border-bottom: 1px solid var(--bg);
+        }
+
+        .detail-row:last-child { border-bottom: none; }
+
+        .detail-label { color: var(--muted); font-size: 0.8rem; font-weight: 500; flex-shrink: 0; }
+        .detail-val   { font-weight: 600; color: var(--black); text-align: right; font-size: 0.875rem; }
+
+        .detail-desc {
+            background: var(--bg);
+            border-radius: 8px;
+            border-left: 3px solid var(--border);
+            padding: 12px 14px;
+            font-size: 0.875rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin-top: 4px;
+        }
+
+        /* Multimedia grid en modal */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .media-thumb {
+            aspect-ratio: 4/3;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.5rem;
+            background: var(--bg);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .media-thumb:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        .media-thumb img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            position: absolute; inset: 0;
+        }
+
+        .media-thumb .media-ext {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--muted);
+            background: var(--white);
+            padding: 1px 5px;
+            border-radius: 3px;
+        }
+
+        .media-empty {
+            font-size: 0.85rem;
+            color: var(--muted);
+            font-style: italic;
+            padding: 16px 0;
+        }
+
+        /* Modal footer */
+        .modal-footer {
+            padding: 16px 28px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .btn-seguimiento {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-seguimiento:hover { background: var(--primary-dark); }
+
+        .btn-cerrar-modal {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cerrar-modal:hover { border-color: #a1a1aa; color: var(--text); }
+
+        /* Spinner de modal */
+        .modal-loading {
+            padding: 60px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .big-spinner {
+            width: 32px; height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
         }
     </style>
-    <link rel="stylesheet" href="topbar_global.css">
 </head>
 
 <body>
 
+    <!-- ── TOPBAR (dinámico por rol) ───────────────────────────────── -->
     <header class="topbar">
         <div class="topbar-left">
-            <a href="dash_ajustador.html" class="topbar-logo">
-                <h1>Seguros<span>Pro</span></h1>
-            </a>
-            <nav class="topbar-nav">
-                <a class="active" href="dash_ajustador.html">Inicio</a>
-                <a href="registro_siniestro.html">Registrar Siniestro</a>
-                <a href="consulta_siniestros.html">Mis Registros</a>
-                <a href="buscar_siniestros.html">Buscador</a>
-                <a href="detalle_siniestro.html">Mensajes / Dudas</a>
-            </nav>
+            <a id="logoLink" href="#" class="topbar-logo">Seguros<span>Pro</span></a>
+            <nav class="topbar-nav" id="topbarNav"></nav>
         </div>
         <div class="topbar-right">
-            <span class="badge-role">Ajustador</span>
+            <span class="badge-role" id="badgeRol"></span>
             <div class="user-badge">
                 <div class="user-info">
-                    <strong>Carlos A.</strong>
-                    <small>Región Norte</small>
+                    <strong id="userNombre">...</strong>
+                    <small id="userRolLabel">...</small>
                 </div>
-                <div class="avatar">CA</div>
+                <div class="avatar" id="userAvatar">?</div>
             </div>
-            <a href="login.html" class="btn-logout" onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
+            <a href="login.html" class="btn-logout"
+               onclick="sessionStorage.clear(); localStorage.clear();">Salir</a>
         </div>
     </header>
 
-    <main class="container">
-        <h1 class="page-title">Consulta de Siniestros y Pagos</h1>
+    <!-- ── CONTENIDO PRINCIPAL ─────────────────────────────────────── -->
+    <div class="container">
 
-        <style>
-            /* Badges for status in table */
-            .badge-status {
-                padding: 4px 10px;
-                border-radius: 12px;
-                font-size: 0.75rem;
-                font-weight: 600;
-                display: inline-flex;
-                align-items: center;
-                white-space: nowrap;
-            }
+        <div class="page-header">
+            <h1>Consulta de Siniestros</h1>
+            <p id="pageSubtitle">Consulta el estado, tipo de resolución y pagos aplicables a cada siniestro.</p>
+        </div>
 
-            .badge-pending {
-                background-color: #fef08a;
-                color: #854d0e;
-            }
-
-            .badge-repair {
-                background-color: #bfdbfe;
-                color: #1e3a8a;
-            }
-
-            .badge-total-loss {
-                background-color: #fecdd3;
-                color: #9f1239;
-            }
-
-            .badge-accepted {
-                background-color: #bbf7d0;
-                color: #166534;
-            }
-
-            .badge-rejected {
-                background-color: #e5e5e5;
-                color: #52525b;
-            }
-        </style>
-
-        <section class="panel">
-            <p class="panel-description">
-                Utiliza los filtros a continuación para segmentar los siniestros por rango de fechas. Puedes realizar
-                búsquedas cruzadas por Asegurado, Ajustador o Supervisor.
-            </p>
-
-            <form action="#" id="formFiltros">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="fecha_inicio">Fecha Inicio del Siniestro</label>
-                        <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+        <!-- FILTROS -->
+        <div class="filter-panel">
+            <h2>🔎 Filtros de Búsqueda</h2>
+            <form id="formFiltros" onsubmit="return false;">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="fechaDesde">Fecha inicio</label>
+                        <input type="date" id="fechaDesde" name="fechaDesde">
                     </div>
-                    <div class="form-group">
-                        <label for="fecha_fin">Fecha Fin del Siniestro</label>
-                        <input type="date" id="fecha_fin" name="fecha_fin" required>
+                    <div class="filter-group">
+                        <label for="fechaHasta">Fecha fin</label>
+                        <input type="date" id="fechaHasta" name="fechaHasta">
                     </div>
-                    <button type="submit" class="btn btn-primary"
-                        style="height: 44px; display:flex; align-items:center;">Filtrar Siniestros</button>
+                    <div class="filter-group" id="filtroEstadoWrap">
+                        <label for="filtroEstado">Estado</label>
+                        <select id="filtroEstado">
+                            <option value="">Todos los estados</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Aceptado">Aceptado</option>
+                            <option value="Aceptado con pago de deducible">Con deducible</option>
+                            <option value="Aceptado sin pago de deducible">Sin deducible</option>
+                            <option value="Aplica pago para reparación">Pago reparación</option>
+                            <option value="Pérdida total">Pérdida total</option>
+                            <option value="Rechazado">Rechazado</option>
+                        </select>
+                    </div>
+                    <button class="btn-buscar" id="btnBuscar" onclick="buscar()">
+                        <span id="btnBuscarText">Consultar</span>
+                        <span class="btn-spinner" id="btnSpinner"></span>
+                    </button>
+                    <button class="btn-limpiar" type="button" onclick="limpiar()">Limpiar</button>
                 </div>
             </form>
+        </div>
 
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Folio Siniestro</th>
-                            <th>Fecha</th>
-                            <th>Asegurado Titular</th>
-                            <th>Dictamen / Estatus</th>
-                            <th>Pagos / Deducible</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>#SIN-10103</strong></td>
-                            <td>26 Feb, 2026</td>
-                            <td>Roberto Díaz</td>
-                            <td>
-                                <span class="badge-status badge-pending">Evaluación Pendiente</span>
-                            </td>
-                            <td>
-                                <span style="color: var(--text-muted); font-size: 0.8rem;">Por determinar</span>
-                            </td>
-                            <td><a href="detalle_siniestro.html" class="btn btn-small">Ver Detalle y Multimedia</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>#SIN-10102</strong></td>
-                            <td>24 Feb, 2026</td>
-                            <td>María García</td>
-                            <td>
-                                <span class="badge-status badge-repair">Reparación Autorizada</span>
-                            </td>
-                            <td>
-                                <strong>$0.00 MXN</strong><br>
-                                <small style="color: var(--text-muted)">Aceptado sin deducible</small>
-                            </td>
-                            <td><a href="detalle_siniestro.html" class="btn btn-small">Ver Detalle y Multimedia</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>#SIN-10101</strong></td>
-                            <td>20 Feb, 2026</td>
-                            <td>Juan Pérez</td>
-                            <td>
-                                <span class="badge-status badge-total-loss">Pérdida Total</span>
-                            </td>
-                            <td>
-                                <strong style="color: var(--primary-orange)">$124,500.00 MXN</strong><br>
-                                <small style="color: var(--text-muted)">Indemnización Programada</small>
-                            </td>
-                            <td><a href="detalle_siniestro.html" class="btn btn-small">Ver Detalle y Multimedia</a></td>
-                        </tr>
-                        <tr>
-                            <td><strong>#SIN-10099</strong></td>
-                            <td>15 Feb, 2026</td>
-                            <td>Lucía Fernández</td>
-                            <td>
-                                <span class="badge-status badge-rejected">Rechazado (Improcedente)</span>
-                            </td>
-                            <td>
-                                <span style="color: var(--text-muted); font-size: 0.8rem;">No Aplica</span>
-                            </td>
-                            <td><a href="detalle_siniestro.html" class="btn btn-small">Ver Detalle y Multimedia</a></td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- RESULTADOS -->
+        <div class="results-panel">
+            <div class="results-header">
+                <h2>📋 Resultados</h2>
+                <span class="results-count" id="resultsCount"></span>
             </div>
-        </section>
-    </main>
 
+            <div id="resultsBody">
+                <!-- Estado inicial: pide que se haga una búsqueda -->
+                <div class="state-box" id="stateInicial">
+                    <div class="state-icon">📅</div>
+                    <div class="state-title">Selecciona un rango de fechas</div>
+                    <div class="state-msg">Define las fechas de inicio y fin para consultar los siniestros registrados en ese período.</div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /container -->
+
+    <!-- ══════════════════════════════════════════════════════════════
+         MODAL DE DETALLE
+    ══════════════════════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="modalOverlay" onclick="cerrarModalFuera(event)">
+        <div class="modal" id="modal">
+
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <h2 id="modalTitulo">Detalle del Siniestro</h2>
+                    <span class="modal-sub" id="modalSub"></span>
+                </div>
+                <button class="modal-close" onclick="cerrarModal()" title="Cerrar">✕</button>
+            </div>
+
+            <div id="modalContent">
+                <div class="modal-loading">
+                    <div class="big-spinner"></div>
+                    <span>Cargando información...</span>
+                </div>
+            </div>
+
+            <div class="modal-footer" id="modalFooter" style="display:none;">
+                <a id="btnSeguimiento" href="#" class="btn-seguimiento">
+                    💬 Ver seguimiento y chat
+                </a>
+                <button class="btn-cerrar-modal" onclick="cerrarModal()">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SCRIPT
+    ══════════════════════════════════════════════════════════════ -->
     <script>
-        // UX interactivo simple
-        document.getElementById('formFiltros').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const btn = this.querySelector('button[type="submit"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Buscando...';
-            btn.disabled = true;
+    (() => {
+        /* ── Auth guard ─────────────────────────────────────────── */
+        const token  = sessionStorage.getItem('sp_token');
+        const tipo   = sessionStorage.getItem('sp_tipo');
+        const nombre = sessionStorage.getItem('sp_nombre') || '';
+        const uid    = parseInt(sessionStorage.getItem('sp_id') || '0');
 
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                // En un escenario real aquí recargaríamos los datos JSON en la tabla
-            }, 800);
+        if (!token || !tipo) { sessionStorage.clear(); location.href = 'login.html'; return; }
+
+        /* ── Topbar dinámico ────────────────────────────────────── */
+        const NAV = {
+            Ajustador: [
+                { href: 'dash_ajustador.html',      label: 'Inicio' },
+                { href: 'registro_siniestro.html',  label: 'Registrar Siniestro' },
+                { href: 'consulta_siniestros.html', label: 'Mis Registros', active: true },
+                { href: 'buscar_siniestros.html',   label: 'Buscador' },
+                { href: 'detalle_siniestro.html',   label: 'Mensajes / Dudas' }
+            ],
+            Supervisor: [
+                { href: 'consulta_siniestros.html', label: 'Consulta Siniestros', active: true },
+                { href: 'dash_supervisor.html',     label: 'Panel de Control' },
+                { href: 'vista_supervisor.html',    label: 'Autorizaciones' },
+                { href: 'historial_global.html',    label: 'Historial Global' },
+                { href: 'busqueda_avanzada.html',   label: 'Búsqueda Avanzada' },
+                { href: 'gestion_reparaciones.html',label: 'Gestión Reparaciones' }
+            ],
+            Asegurado: [
+                { href: 'consulta_siniestros.html', label: 'Consulta Siniestros', active: true },
+                { href: 'dash_asegurado.html',      label: 'Mi Unidad' },
+                { href: 'seguimiento_siniestro.html',label: 'Seguimiento' },
+                { href: 'historial_pagos.html',     label: 'Historial de Pagos' },
+                { href: '#',                        label: 'Soporte / Contacto' }
+            ]
+        };
+
+        const DASH = { Ajustador: 'dash_ajustador.html', Supervisor: 'dash_supervisor.html', Asegurado: 'dash_asegurado.html' };
+
+        document.getElementById('logoLink').href            = DASH[tipo] || '#';
+        document.getElementById('badgeRol').textContent     = tipo;
+        document.getElementById('badgeRol').className       = `badge-role badge-${tipo.toLowerCase()}`;
+        document.getElementById('userNombre').textContent   = nombre.split(' ')[0];
+        document.getElementById('userRolLabel').textContent = tipo;
+        document.getElementById('userAvatar').textContent   =
+            nombre.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+        const nav = document.getElementById('topbarNav');
+        (NAV[tipo] || []).forEach(l => {
+            const a = document.createElement('a');
+            a.href = l.href; a.textContent = l.label;
+            if (l.active) a.classList.add('active');
+            nav.appendChild(a);
         });
-    </script>
-</body>
 
+        /* Subtítulo por rol */
+        const SUB = {
+            Supervisor: 'Vista global — puedes ver todos los siniestros del sistema.',
+            Ajustador:  'Vista de ajustador — solo los siniestros que tú registraste.',
+            Asegurado:  'Vista de asegurado — solo los siniestros asociados a tu póliza.'
+        };
+        document.getElementById('pageSubtitle').textContent = SUB[tipo] || '';
+
+        /* ── Defaults de fecha: últimos 30 días ─────────────────── */
+        const hoy   = new Date();
+        const hace30 = new Date(hoy); hace30.setDate(hoy.getDate() - 30);
+        const toISO  = d => d.toISOString().split('T')[0];
+        document.getElementById('fechaDesde').value = toISO(hace30);
+        document.getElementById('fechaHasta').value  = toISO(hoy);
+
+        /* ── Helpers ────────────────────────────────────────────── */
+        const AUTH = { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' };
+
+        function fmtFecha(iso) {
+            if (!iso) return '—';
+            return new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        const ESTADO_PILL = {
+            'Pendiente':                     'pill-warning',
+            'Rechazado':                     'pill-danger',
+            'Aceptado':                      'pill-success',
+            'Aceptado con pago de deducible':'pill-info',
+            'Aceptado sin pago de deducible':'pill-success',
+            'Aplica pago para reparación':   'pill-info',
+            'Pérdida total':                 'pill-danger'
+        };
+
+        const PAGO = {
+            'Pendiente':                     { label: 'Por determinar',         cls: 'pay-pending' },
+            'Rechazado':                     { label: 'No aplica',              cls: 'pay-none' },
+            'Aceptado':                      { label: 'En revisión',            cls: 'pay-process' },
+            'Aceptado con pago de deducible':{ label: 'Pago de deducible',      cls: 'pay-deducible' },
+            'Aceptado sin pago de deducible':{ label: 'Sin deducible',          cls: 'pay-free' },
+            'Aplica pago para reparación':   { label: 'Pago para reparación',   cls: 'pay-repair' },
+            'Pérdida total':                 { label: 'Indemnización total',    cls: 'pay-total' }
+        };
+
+        function estadoPill(estado) {
+            return `<span class="pill ${ESTADO_PILL[estado] || 'pill-neutral'}">${estado}</span>`;
+        }
+
+        function pagoCell(estado) {
+            const p = PAGO[estado] || { label: '—', cls: 'pay-none' };
+            return `<span class="pay-label ${p.cls}">${p.label}</span>`;
+        }
+
+        /* ── Buscar ──────────────────────────────────────────────── */
+        window.buscar = async function () {
+            const desde  = document.getElementById('fechaDesde').value;
+            const hasta  = document.getElementById('fechaHasta').value;
+            const estado = document.getElementById('filtroEstado').value;
+
+            if (!desde || !hasta) {
+                mostrarError('Selecciona un rango de fechas para consultar.');
+                return;
+            }
+            if (desde > hasta) {
+                mostrarError('La fecha de inicio no puede ser posterior a la fecha fin.');
+                return;
+            }
+
+            setBuscando(true);
+
+            const qs = new URLSearchParams({ desde, hasta });
+            if (estado) qs.set('estado', estado);
+
+            try {
+                const res  = await fetch(`/api/siniestros/buscar?${qs}`, { headers: AUTH });
+                const data = await res.json();
+
+                if (!data.success) {
+                    mostrarError(data.message || 'Error al consultar los siniestros.');
+                    return;
+                }
+
+                renderTabla(data.siniestros, desde, hasta);
+            } catch {
+                mostrarError('No se pudo conectar al servidor. Verifica que esté activo.');
+            } finally {
+                setBuscando(false);
+            }
+        };
+
+        window.limpiar = function () {
+            document.getElementById('fechaDesde').value  = toISO(hace30);
+            document.getElementById('fechaHasta').value   = toISO(hoy);
+            document.getElementById('filtroEstado').value = '';
+            document.getElementById('resultsCount').textContent = '';
+            document.getElementById('resultsBody').innerHTML = `
+                <div class="state-box" id="stateInicial">
+                    <div class="state-icon">📅</div>
+                    <div class="state-title">Selecciona un rango de fechas</div>
+                    <div class="state-msg">Define las fechas de inicio y fin para consultar los siniestros registrados en ese período.</div>
+                </div>`;
+        };
+
+        function setBuscando(on) {
+            const btn    = document.getElementById('btnBuscar');
+            const text   = document.getElementById('btnBuscarText');
+            const spinner = document.getElementById('btnSpinner');
+            btn.disabled         = on;
+            text.textContent     = on ? 'Consultando...' : 'Consultar';
+            spinner.style.display = on ? 'block' : 'none';
+
+            if (on) {
+                document.getElementById('resultsBody').innerHTML = `
+                    <table><tbody>
+                        ${[1,2,3,4].map(() => `
+                            <tr class="skeleton-row">
+                                <td><div class="skel" style="width:80px;"></div></td>
+                                <td><div class="skel" style="width:90px;"></div></td>
+                                <td><div class="skel" style="width:130px;"></div></td>
+                                <td><div class="skel" style="width:160px;"></div></td>
+                                <td><div class="skel" style="width:110px;"></div></td>
+                                <td><div class="skel" style="width:120px;"></div></td>
+                            </tr>`).join('')}
+                    </tbody></table>`;
+                document.getElementById('resultsCount').textContent = '';
+            }
+        }
+
+        function mostrarError(msg) {
+            document.getElementById('resultsBody').innerHTML = `
+                <div class="state-box">
+                    <div class="state-icon">⚠️</div>
+                    <div class="state-title">No se pudo completar la consulta</div>
+                    <div class="state-msg">${msg}</div>
+                </div>`;
+            document.getElementById('resultsCount').textContent = '';
+        }
+
+        function renderTabla(lista, desde, hasta) {
+            const count = document.getElementById('resultsCount');
+            count.textContent = lista.length === 0
+                ? 'Sin resultados'
+                : `${lista.length} siniestro${lista.length !== 1 ? 's' : ''}`;
+
+            if (lista.length === 0) {
+                document.getElementById('resultsBody').innerHTML = `
+                    <div class="state-box">
+                        <div class="state-icon">🔍</div>
+                        <div class="state-title">Sin siniestros en este período</div>
+                        <div class="state-msg">No se encontraron siniestros entre ${fmtFecha(desde)} y ${fmtFecha(hasta)}. Prueba con un rango más amplio.</div>
+                    </div>`;
+                return;
+            }
+
+            /* Columna Ajustador solo para Supervisores */
+            const colAjustador = tipo === 'Supervisor'
+                ? '<th>Ajustador</th>'
+                : '';
+
+            const filas = lista.map(s => {
+                const ajCol = tipo === 'Supervisor'
+                    ? `<td>${s.NombreAjustador || '—'}</td>`
+                    : '';
+
+                return `
+                    <tr>
+                        <td><strong>${s.Folio || 'SIN-????'}</strong></td>
+                        <td>${fmtFecha(s.FechaIncidente)}</td>
+                        <td>
+                            ${s.NombreCliente}
+                            <small>${s.NombreAseguradora} · ${s.NumeroPoliza}</small>
+                        </td>
+                        <td>
+                            ${s.MarcaUnidad} ${s.ModeloUnidad}
+                            <small>${s.PlacasUnidad}</small>
+                        </td>
+                        <td>${estadoPill(s.Estado)}</td>
+                        <td>${pagoCell(s.Estado)}</td>
+                        ${ajCol}
+                        <td>
+                            <button class="btn-detalle" onclick="abrirModal(${s.SiniestroID})">
+                                Ver detalle
+                            </button>
+                        </td>
+                    </tr>`;
+            }).join('');
+
+            document.getElementById('resultsBody').innerHTML = `
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Folio</th>
+                                <th>Fecha</th>
+                                <th>Asegurado / Póliza</th>
+                                <th>Vehículo</th>
+                                <th>Estado</th>
+                                <th>Tipo de Resolución</th>
+                                ${colAjustador}
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>${filas}</tbody>
+                    </table>
+                </div>`;
+        }
+
+        /* ── Modal de detalle ───────────────────────────────────── */
+        window.abrirModal = async function (siniestroId) {
+            document.getElementById('modalTitulo').textContent = 'Cargando...';
+            document.getElementById('modalSub').textContent    = '';
+            document.getElementById('modalContent').innerHTML  = `
+                <div class="modal-loading">
+                    <div class="big-spinner"></div>
+                    <span>Cargando información del siniestro...</span>
+                </div>`;
+            document.getElementById('modalFooter').style.display = 'none';
+            document.getElementById('modalOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+
+            try {
+                const [resSin, resMed] = await Promise.all([
+                    fetch(`/api/siniestros/${siniestroId}`, { headers: AUTH }),
+                    fetch(`/api/siniestros/${siniestroId}/multimedia`, { headers: AUTH })
+                ]);
+
+                const dataSin = await resSin.json();
+                const dataMed = await resMed.json();
+
+                if (!dataSin.success) {
+                    document.getElementById('modalContent').innerHTML = `
+                        <div class="modal-loading">
+                            <div>⚠️</div>
+                            <span>No se pudo cargar el siniestro.</span>
+                        </div>`;
+                    return;
+                }
+
+                const s = dataSin.siniestro;
+                const archivos = dataMed.success ? dataMed.archivos : [];
+
+                document.getElementById('modalTitulo').textContent =
+                    `Siniestro ${s.Folio || '#' + siniestroId}`;
+                document.getElementById('modalSub').innerHTML =
+                    `${estadoPill(s.Estado)} &nbsp;·&nbsp; ${s.MarcaUnidad} ${s.ModeloUnidad} — ${s.PlacasUnidad}`;
+
+                /* Multimedia HTML */
+                let mediaHtml;
+                if (archivos.length === 0) {
+                    mediaHtml = '<p class="media-empty">Sin archivos adjuntos en este expediente.</p>';
+                } else {
+                    mediaHtml = `<div class="media-grid">
+                        ${archivos.map(a => {
+                            const isImg = a.TipoMime.startsWith('image/');
+                            const ext   = a.NombreArchivo.split('.').pop().toUpperCase().slice(0, 4);
+                            const icon  = a.TipoMime.startsWith('video/') ? '🎬' : isImg ? '🖼️' : '📄';
+                            return `<div class="media-thumb"
+                                        onclick="window.open('/api/multimedia/${a.MultimediaID}', '_blank')"
+                                        title="${a.NombreArchivo}">
+                                        ${icon}
+                                        <span class="media-ext">${ext}</span>
+                                    </div>`;
+                        }).join('')}
+                    </div>
+                    <p style="font-size:0.75rem;color:var(--muted);margin-top:10px;">
+                        ${archivos.length} archivo${archivos.length !== 1 ? 's' : ''} · Haz clic para abrir
+                    </p>`;
+                }
+
+                /* Fila helpers */
+                const row = (label, val) =>
+                    `<div class="detail-row">
+                        <span class="detail-label">${label}</span>
+                        <span class="detail-val">${val || '—'}</span>
+                    </div>`;
+
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="modal-body">
+
+                        <!-- Columna izquierda: datos del siniestro -->
+                        <div>
+                            <div class="modal-section-title">Datos del Siniestro</div>
+                            ${row('Aseguradora',       s.NombreAseguradora)}
+                            ${row('No. Póliza',        s.NumeroPoliza)}
+                            ${row('Cliente',           s.NombreCliente)}
+                            ${row('Fecha Incidente',   fmtFecha(s.FechaIncidente))}
+                            ${row('Hora',              s.HoraIncidente)}
+                            ${row('Lugar',             s.LugarIncidente)}
+                            ${s.Involucrados ? row('Involucrados', s.Involucrados) : ''}
+                            ${row('Ajustador Asignado', s.NombreAjustador)}
+                            ${row('Tipo de Resolución', (PAGO[s.Estado] || {}).label || '—')}
+
+                            <div style="margin-top:14px;">
+                                <div class="modal-section-title">Descripción / Dictamen</div>
+                                <div class="detail-desc">${s.Descripcion || 'Sin descripción registrada.'}</div>
+                            </div>
+
+                            <div style="margin-top:14px;">
+                                <div class="modal-section-title">Unidad Asegurada</div>
+                                ${row('Vehículo',   s.MarcaUnidad + ' ' + s.ModeloUnidad)}
+                                ${row('Placas',     s.PlacasUnidad)}
+                                ${row('Serie / VIN', s.SerieUnidad)}
+                            </div>
+                        </div>
+
+                        <!-- Columna derecha: multimedia -->
+                        <div>
+                            <div class="modal-section-title">Archivos del Expediente</div>
+                            ${mediaHtml}
+                        </div>
+
+                    </div>`;
+
+                /* Activar footer */
+                document.getElementById('btnSeguimiento').href =
+                    `seguimiento_siniestro.html?id=${siniestroId}`;
+                document.getElementById('modalFooter').style.display = '';
+
+            } catch {
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="modal-loading">
+                        <div>🔌</div>
+                        <span>Error de conexión al cargar el detalle.</span>
+                    </div>`;
+            }
+        };
+
+        window.cerrarModal = function () {
+            document.getElementById('modalOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        };
+
+        window.cerrarModalFuera = function (e) {
+            if (e.target === document.getElementById('modalOverlay')) cerrarModal();
+        };
+
+        /* Cerrar con Escape */
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') cerrarModal();
+        });
+
+        /* Lanzar búsqueda automática al cargar */
+        buscar();
+
+    })();
+    </script>
+
+</body>
 </html>

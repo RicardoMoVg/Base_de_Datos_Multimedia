@@ -11,20 +11,20 @@
         :root {
             --primary-orange: #ff6b00;
             --primary-orange-hover: #e65c00;
-            --black: #1a1a1a;
+            --black: #000000;
             --white: #ffffff;
-            --bg-body: #f4f4f5;
-            --border-color: #e4e4e7;
-            --text-main: #27272a;
-            --text-muted: #71717a;
+            --bg-body: #fafafa;
+            --border-color: #e5e5e5;
+            --text-main: #111111;
+            --text-muted: #666666;
 
             /* Semántica */
-            --warning-bg: #fef3c7;
-            --warning-text: #92400e;
-            --info: #3b82f6;
-            --info-bg: #dbeafe;
-            --danger: #ef4444;
-            --success: #10b981;
+            --warning-bg: #ffffff;
+            --warning-text: #000000;
+            --info: #000000;
+            --info-bg: #ffffff;
+            --danger: #000000;
+            --success: #000000;
         }
 
         *,
@@ -234,8 +234,9 @@
         }
 
         .pill-status {
-            background-color: var(--warning-bg);
-            color: var(--warning-text);
+            background-color: rgba(255, 107, 0, 0.1);
+            color: var(--primary-orange);
+            border: none;
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -251,7 +252,7 @@
             border-radius: 12px;
             padding: 32px;
             margin-bottom: 24px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
         }
 
         .section-header {
@@ -311,18 +312,18 @@
         .media-card {
             background: var(--white);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
         }
 
         .media-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
-            border-color: #d4d4d8;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(255, 107, 0, 0.15);
+            border-color: var(--primary-orange);
         }
 
         .media-preview {
@@ -383,11 +384,11 @@
                 <h1>Seguros<span>Pro</span></h1>
             </a>
             <nav class="topbar-nav">
-                <a class="active" href="dash_ajustador.html">Inicio</a>
+                <a href="dash_ajustador.html">Inicio</a>
                 <a href="registro_siniestro.html">Registrar Siniestro</a>
                 <a href="consulta_siniestros.html">Mis Registros</a>
                 <a href="buscar_siniestros.html">Buscador</a>
-                <a href="detalle_siniestro.html">Mensajes / Dudas</a>
+                <a class="active" href="detalle_siniestro.html">Mensajes / Dudas</a>
             </nav>
         </div>
         <div class="topbar-right">

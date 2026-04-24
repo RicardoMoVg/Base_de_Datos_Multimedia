@@ -230,10 +230,32 @@ app.get('/api/perfil', verificarToken, async (req, res) => {
     }
 });
 
+// ─── USUARIOS: BUSCAR ASEGURADOS (para vincular en registro) ──────────────────
+app.get('/api/usuarios/asegurados', verificarToken, requerirRol('Ajustador', 'Supervisor'), async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q || q.trim().length < 2) {
+            return res.json({ success: true, usuarios: [] });
+        }
+        const result = await pool.request()
+            .input('Busqueda', sql.NVarChar(200), `%${q.trim()}%`)
+            .query(`
+                SELECT UsuarioID, Nombre, Apellidos, Correo
+                FROM dbo.Usuario
+                WHERE TipoUsuario = 'Asegurado'
+                  AND (Nombre + ' ' + Apellidos LIKE @Busqueda OR Correo LIKE @Busqueda)
+            `);
+        res.json({ success: true, usuarios: result.recordset });
+    } catch (err) {
+        console.error('❌ Error en GET /api/usuarios/asegurados:', err);
+        res.status(500).json({ success: false, message: 'Error al buscar asegurados.' });
+    }
+});
+
 // ─── SINIESTROS: BUSCAR (debe ir ANTES de /:id) ───────────────────────────────
 app.get('/api/siniestros/buscar', verificarToken, async (req, res) => {
     try {
-        const { tipoUsuario, id: usuarioID } = req.usuario;
+        const { tipoUsuario, id: usuarioID, nombre } = req.usuario;
         const { desde, hasta, aseguradora, estado, placa } = req.query;
 
         const request = pool.request();
@@ -243,8 +265,13 @@ app.get('/api/siniestros/buscar', verificarToken, async (req, res) => {
             where.push('s.AjustadorID = @UsuarioID');
             request.input('UsuarioID', sql.Int, usuarioID);
         } else if (tipoUsuario === 'Asegurado') {
-            where.push('s.AseguradoID = @UsuarioID');
+            // Acceso por AseguradoID explícito O por coincidencia de NombreCliente
+            const userInfo = await pool.request().input('UID', sql.Int, usuarioID)
+                .query(`SELECT Nombre + ' ' + Apellidos AS NombreCompleto FROM dbo.Usuario WHERE UsuarioID = @UID`);
+            const nombreCompleto = userInfo.recordset[0]?.NombreCompleto || '';
+            where.push('(s.AseguradoID = @UsuarioID OR s.NombreCliente = @NombreCompleto)');
             request.input('UsuarioID', sql.Int, usuarioID);
+            request.input('NombreCompleto', sql.NVarChar(200), nombreCompleto);
         }
 
         if (desde) {
@@ -297,7 +324,7 @@ app.post('/api/siniestros', verificarToken, requerirRol('Ajustador'), uploadMult
             nombreAseguradora, noPoliza, nombreCliente,
             marcaUnidad, modeloUnidad, placasUnidad, serieUnidad,
             fechaIncidente, horaIncidente, lugarIncidente,
-            involucrados, descripcion
+            involucrados, descripcion, aseguradoId
         } = req.body;
 
         if (!nombreAseguradora || !noPoliza || !nombreCliente || !marcaUnidad ||
@@ -306,8 +333,11 @@ app.post('/api/siniestros', verificarToken, requerirRol('Ajustador'), uploadMult
             return res.status(400).json({ success: false, message: 'Todos los campos obligatorios son requeridos.' });
         }
 
+        const aseguradoIdParsed = aseguradoId ? parseInt(aseguradoId) : null;
+
         const result = await pool.request()
             .input('AjustadorID', sql.Int, req.usuario.id)
+            .input('AseguradoID', sql.Int, aseguradoIdParsed)
             .input('NombreAseguradora', sql.NVarChar(200), nombreAseguradora)
             .input('NumeroPoliza', sql.NVarChar(100), noPoliza)
             .input('NombreCliente', sql.NVarChar(200), nombreCliente)
@@ -322,12 +352,12 @@ app.post('/api/siniestros', verificarToken, requerirRol('Ajustador'), uploadMult
             .input('Descripcion', sql.NVarChar(sql.MAX), descripcion)
             .query(`
                 INSERT INTO dbo.Siniestro
-                    (AjustadorID, NombreAseguradora, NumeroPoliza, NombreCliente,
+                    (AjustadorID, AseguradoID, NombreAseguradora, NumeroPoliza, NombreCliente,
                      MarcaUnidad, ModeloUnidad, PlacasUnidad, SerieUnidad,
                      FechaIncidente, HoraIncidente, LugarIncidente, Involucrados, Descripcion)
                 OUTPUT INSERTED.SiniestroID
                 VALUES
-                    (@AjustadorID, @NombreAseguradora, @NumeroPoliza, @NombreCliente,
+                    (@AjustadorID, @AseguradoID, @NombreAseguradora, @NumeroPoliza, @NombreCliente,
                      @MarcaUnidad, @ModeloUnidad, @PlacasUnidad, @SerieUnidad,
                      @FechaIncidente, @HoraIncidente, @LugarIncidente, @Involucrados, @Descripcion)
             `);
@@ -374,7 +404,12 @@ app.get('/api/siniestros', verificarToken, async (req, res) => {
         if (tipoUsuario === 'Ajustador') {
             whereClause = 'WHERE s.AjustadorID = @UsuarioID';
         } else if (tipoUsuario === 'Asegurado') {
-            whereClause = 'WHERE s.AseguradoID = @UsuarioID';
+            // Acceso por AseguradoID explícito O por coincidencia de NombreCliente
+            const userInfo = await pool.request().input('UID', sql.Int, usuarioID)
+                .query(`SELECT Nombre + ' ' + Apellidos AS NombreCompleto FROM dbo.Usuario WHERE UsuarioID = @UID`);
+            const nombreCompleto = userInfo.recordset[0]?.NombreCompleto || '';
+            request.input('NombreCompleto', sql.NVarChar(200), nombreCompleto);
+            whereClause = 'WHERE (s.AseguradoID = @UsuarioID OR s.NombreCliente = @NombreCompleto)';
         }
 
         const result = await request.query(`
@@ -526,7 +561,8 @@ app.get('/api/siniestros/:id', verificarToken, async (req, res) => {
             .query(`
                 SELECT s.*,
                        'SIN-' + RIGHT('0000' + CAST(s.SiniestroID AS VARCHAR), 4) AS Folio,
-                       u.Nombre + ' ' + u.Apellidos AS NombreAjustador
+                       u.Nombre + ' ' + u.Apellidos AS NombreAjustador,
+                       CONVERT(VARCHAR(10), s.FechaCompromiso, 23) AS FechaCompromisoStr
                 FROM dbo.Siniestro s
                 JOIN dbo.Usuario u ON u.UsuarioID = s.AjustadorID
                 WHERE s.SiniestroID = @SiniestroID
@@ -541,14 +577,59 @@ app.get('/api/siniestros/:id', verificarToken, async (req, res) => {
         if (tipoUsuario === 'Ajustador' && siniestro.AjustadorID !== usuarioID) {
             return res.status(403).json({ success: false, message: 'No tienes acceso a este siniestro.' });
         }
-        if (tipoUsuario === 'Asegurado' && siniestro.AseguradoID !== usuarioID) {
-            return res.status(403).json({ success: false, message: 'No tienes acceso a este siniestro.' });
+        if (tipoUsuario === 'Asegurado') {
+            // Acceso por AseguradoID explícito O por coincidencia de NombreCliente
+            const userInfo = await pool.request().input('UID', sql.Int, usuarioID)
+                .query(`SELECT Nombre + ' ' + Apellidos AS NombreCompleto FROM dbo.Usuario WHERE UsuarioID = @UID`);
+            const nombreCompleto = userInfo.recordset[0]?.NombreCompleto || '';
+            if (siniestro.AseguradoID !== usuarioID && siniestro.NombreCliente !== nombreCompleto) {
+                return res.status(403).json({ success: false, message: 'No tienes acceso a este siniestro.' });
+            }
         }
 
         res.json({ success: true, siniestro });
     } catch (err) {
         console.error('❌ Error en GET /api/siniestros/:id:', err);
         res.status(500).json({ success: false, message: 'Error al obtener el siniestro.' });
+    }
+});
+
+// ─── SINIESTROS: FECHA COMPROMISO ─────────────────────────────────────────────
+app.patch('/api/siniestros/:id/compromiso', verificarToken, requerirRol('Supervisor', 'Ajustador'), async (req, res) => {
+    try {
+        const siniestroID = parseInt(req.params.id);
+        const { fechaCompromiso } = req.body;
+        const { tipoUsuario, id: usuarioID } = req.usuario;
+
+        if (!fechaCompromiso || !/^\d{4}-\d{2}-\d{2}$/.test(fechaCompromiso)) {
+            return res.status(400).json({ success: false, message: 'Fecha inválida. Use formato YYYY-MM-DD.' });
+        }
+
+        const check = await pool.request()
+            .input('SiniestroID', sql.Int, siniestroID)
+            .query('SELECT AjustadorID FROM dbo.Siniestro WHERE SiniestroID = @SiniestroID');
+
+        if (check.recordset.length === 0) {
+            return res.status(404).json({ success: false, message: 'Siniestro no encontrado.' });
+        }
+
+        if (tipoUsuario === 'Ajustador' && check.recordset[0].AjustadorID !== usuarioID) {
+            return res.status(403).json({ success: false, message: 'No tienes acceso a este siniestro.' });
+        }
+
+        await pool.request()
+            .input('SiniestroID', sql.Int, siniestroID)
+            .input('FechaCompromiso', sql.Date, fechaCompromiso)
+            .query(`
+                UPDATE dbo.Siniestro
+                SET FechaCompromiso = @FechaCompromiso, FechaActualizacion = GETDATE()
+                WHERE SiniestroID = @SiniestroID
+            `);
+
+        res.json({ success: true, message: 'Fecha de compromiso actualizada.' });
+    } catch (err) {
+        console.error('❌ Error en PATCH /api/siniestros/:id/compromiso:', err);
+        res.status(500).json({ success: false, message: 'Error al actualizar la fecha de compromiso.' });
     }
 });
 
@@ -565,7 +646,7 @@ app.post('/api/siniestros/:id/comentarios', verificarToken, async (req, res) => 
 
         const check = await pool.request()
             .input('SiniestroID', sql.Int, siniestroID)
-            .query('SELECT AjustadorID, AseguradoID FROM dbo.Siniestro WHERE SiniestroID = @SiniestroID');
+            .query('SELECT AjustadorID, AseguradoID, NombreCliente FROM dbo.Siniestro WHERE SiniestroID = @SiniestroID');
 
         if (check.recordset.length === 0) {
             return res.status(404).json({ success: false, message: 'Siniestro no encontrado.' });
@@ -575,8 +656,14 @@ app.post('/api/siniestros/:id/comentarios', verificarToken, async (req, res) => 
         if (tipoUsuario === 'Ajustador' && s.AjustadorID !== usuarioID) {
             return res.status(403).json({ success: false, message: 'No tienes acceso a este siniestro.' });
         }
-        if (tipoUsuario === 'Asegurado' && s.AseguradoID !== usuarioID) {
-            return res.status(403).json({ success: false, message: 'No tienes acceso a este siniestro.' });
+        if (tipoUsuario === 'Asegurado') {
+            // Acceso por AseguradoID explícito O por coincidencia de NombreCliente
+            const userInfo = await pool.request().input('UID', sql.Int, usuarioID)
+                .query(`SELECT Nombre + ' ' + Apellidos AS NombreCompleto FROM dbo.Usuario WHERE UsuarioID = @UID`);
+            const nombreCompleto = userInfo.recordset[0]?.NombreCompleto || '';
+            if (s.AseguradoID !== usuarioID && s.NombreCliente !== nombreCompleto) {
+                return res.status(403).json({ success: false, message: 'No tienes acceso a este siniestro.' });
+            }
         }
 
         await pool.request()

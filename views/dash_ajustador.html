@@ -55,32 +55,32 @@
                     <div class="label">Siniestros Asignados</div>
                     <div class="icon-wrapper">📋</div>
                 </div>
-                <div class="value">18</div>
-                <div class="sub positive">↑ 3 nuevos esta semana</div>
+                <div class="value" id="kpiTotal">—</div>
+                <div class="sub positive" id="kpiTotalSub">Cargando...</div>
             </div>
             <div class="stat-card">
                 <div class="stat-card-header">
                     <div class="label">Dictámenes Emitidos</div>
                     <div class="icon-wrapper">✅</div>
                 </div>
-                <div class="value">11</div>
-                <div class="sub">Tasa de cierre: 61%</div>
+                <div class="value" id="kpiDictamenes">—</div>
+                <div class="sub" id="kpiDictamenesSub">Cargando...</div>
             </div>
             <div class="stat-card">
                 <div class="stat-card-header">
                     <div class="label">En Investigación</div>
                     <div class="icon-wrapper">⏳</div>
                 </div>
-                <div class="value">5</div>
-                <div class="sub warning">Promedio: 4 días por caso</div>
+                <div class="value" id="kpiPendientes">—</div>
+                <div class="sub warning">Siniestros pendientes</div>
             </div>
             <div class="stat-card">
                 <div class="stat-card-header">
-                    <div class="label">Archivos Multimedia</div>
-                    <div class="icon-wrapper">📷</div>
+                    <div class="label">Rechazados / Cerrados</div>
+                    <div class="icon-wrapper">📁</div>
                 </div>
-                <div class="value">142</div>
-                <div class="sub">Fotos y documentos este mes</div>
+                <div class="value" id="kpiCerrados">—</div>
+                <div class="sub" id="kpiCerradosSub">Cargando...</div>
             </div>
         </div>
 
@@ -112,7 +112,11 @@
 
     <script>
         const token = sessionStorage.getItem('sp_token');
-        if (!token) window.location.href = 'login.html';
+        const tipo  = sessionStorage.getItem('sp_tipo');
+        if (!token || tipo !== 'Ajustador') {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
 
         // Actualizar info del usuario en el topbar
         const nombre = sessionStorage.getItem('sp_nombre') || '?';
@@ -149,8 +153,11 @@
 
                 if (!data.success || data.siniestros.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted);">No tienes siniestros registrados aún.</td></tr>';
+                    actualizarKPIs([]);
                     return;
                 }
+
+                actualizarKPIs(data.siniestros);
 
                 tbody.innerHTML = data.siniestros.map(s => `
                     <tr>
@@ -166,6 +173,22 @@
             } catch (err) {
                 tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--danger);">Error al cargar los siniestros.</td></tr>';
             }
+        }
+
+        function actualizarKPIs(lista) {
+            const total      = lista.length;
+            const pendientes = lista.filter(s => s.Estado === 'Pendiente').length;
+            const cerrados   = lista.filter(s => s.Estado === 'Rechazado').length;
+            const dictamenes = lista.filter(s => s.Estado !== 'Pendiente' && s.Estado !== 'Rechazado').length;
+            const tasa       = total > 0 ? Math.round((dictamenes / total) * 100) : 0;
+
+            document.getElementById('kpiTotal').textContent        = total;
+            document.getElementById('kpiTotalSub').textContent     = total === 1 ? '1 siniestro registrado' : `${total} siniestros registrados`;
+            document.getElementById('kpiDictamenes').textContent   = dictamenes;
+            document.getElementById('kpiDictamenesSub').textContent = `Tasa de cierre: ${tasa}%`;
+            document.getElementById('kpiPendientes').textContent   = pendientes;
+            document.getElementById('kpiCerrados').textContent     = cerrados;
+            document.getElementById('kpiCerradosSub').textContent  = cerrados === 1 ? '1 expediente cerrado' : `${cerrados} expedientes cerrados`;
         }
 
         function nuevoSiniestro() {

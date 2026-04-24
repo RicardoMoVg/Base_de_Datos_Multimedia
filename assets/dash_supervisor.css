@@ -1,23 +1,23 @@
 :root {
     --primary-orange: #ff6b00;
     --primary-orange-hover: #e65c00;
-    --sidebar-bg: #111111;
-    --sidebar-hover: #222222;
-    --black: #1a1a1a;
+    --sidebar-bg: #000000;
+    --sidebar-hover: #1a1a1a;
+    --black: #000000;
     --white: #ffffff;
-    --bg-body: #f4f4f5;
-    --border-color: #e4e4e7;
-    --text-main: #27272a;
-    --text-muted: #71717a;
+    --bg-body: #fafafa;
+    --border-color: #e5e5e5;
+    --text-main: #111111;
+    --text-muted: #666666;
     --text-sidebar: #a1a1aa;
 
-    --danger-bg: #fee2e2;
-    --danger-text: #991b1b;
+    --danger-bg: #ffffff;
+    --danger-text: #000000;
     --danger-solid: #ef4444;
-    --warning-bg: #fef3c7;
-    --warning-text: #92400e;
-    --info-bg: #e0f2fe;
-    --info-text: #075985;
+    --warning-bg: #ffffff;
+    --warning-text: #000000;
+    --info-bg: #ffffff;
+    --info-text: #000000;
 }
 
 *,
@@ -250,14 +250,14 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
-    border-color: #d4d4d8;
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(255, 107, 0, 0.15);
+    border-color: var(--primary-orange);
 }
 
 .stat-card .icon {
@@ -319,7 +319,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
 }
 
 .section-header {
@@ -402,25 +402,26 @@ td strong {
 .pill {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
+    padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
+    border: none;
 }
 
 .pill-danger {
-    background: var(--danger-bg);
-    color: var(--danger-text);
+    background: #000000;
+    color: var(--white);
 }
 
 .pill-warning {
-    background: var(--warning-bg);
-    color: var(--warning-text);
+    background: rgba(255, 107, 0, 0.15);
+    color: var(--primary-orange-hover);
 }
 
 .pill-info {
-    background: var(--info-bg);
-    color: var(--info-text);
+    background: #000000;
+    color: var(--white);
 }
 
 .ajustador-item {
